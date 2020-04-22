@@ -132,7 +132,7 @@
     <Compile Include="Controller\APIServer.cs" />
     <Compile Include="Controller\AutoStartup.cs" />
     <Compile Include="Controller\FileManager.cs" />
-    <Compile Include="Controller\GFWListUpdater.cs" />
+    <Compile Include="Controller\GfwListUpdater.cs" />
     <Compile Include="Controller\HttpPortForwarder.cs" />
     <Compile Include="Controller\HttpProxy.cs" />
     <Compile Include="Controller\HttpProxyRunner.cs" />
@@ -239,13 +239,13 @@
     <Compile Include="View\ShowTextForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="View\ShowTextForm.designer.cs">
+    <Compile Include="View\ShowTextForm.Designer.cs">
       <DependentUpon>ShowTextForm.cs</DependentUpon>
     </Compile>
     <Compile Include="View\SubscribeForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="View\SubscribeForm.designer.cs">
+    <Compile Include="View\SubscribeForm.Designer.cs">
       <DependentUpon>SubscribeForm.cs</DependentUpon>
     </Compile>
     <EmbeddedResource Include="View\ConfigForm.resx">
