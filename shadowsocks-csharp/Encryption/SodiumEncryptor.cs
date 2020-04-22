@@ -1,29 +1,36 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace Shadowsocks.Encryption
 {
     public class SodiumEncryptor
         : IVEncryptor, IDisposable
     {
-        const int CIPHER_SALSA20 = 1;
-        const int CIPHER_CHACHA20 = 2;
-        const int CIPHER_CHACHA20_IETF = 3;
-        const int CIPHER_XSALSA20 = 4 + 1;
-        const int CIPHER_XCHACHA20 = 4 + 2;
+        private const int CIPHER_SALSA20 = 1;
+        private const int CIPHER_CHACHA20 = 2;
+        private const int CIPHER_CHACHA20_IETF = 3;
+        private const int CIPHER_XSALSA20 = 4 + 1;
+        private const int CIPHER_XCHACHA20 = 4 + 2;
 
-        const int SODIUM_BLOCK_SIZE = 64;
+        private const int SODIUM_BLOCK_SIZE = 64;
 
-        protected int _encryptBytesRemaining;
+        private static readonly Dictionary<string, EncryptorInfo> _ciphers = new Dictionary<string, EncryptorInfo>
+        {
+            {"salsa20", new EncryptorInfo(32, 8, true, CIPHER_SALSA20)},
+            {"chacha20", new EncryptorInfo(32, 8, true, CIPHER_CHACHA20)},
+            {"xsalsa20", new EncryptorInfo(32, 24, true, CIPHER_XSALSA20)},
+            {"xchacha20", new EncryptorInfo(32, 24, true, CIPHER_XCHACHA20)},
+            {"chacha20-ietf", new EncryptorInfo(32, 12, true, CIPHER_CHACHA20_IETF)}
+        };
+
+        protected byte[] _decryptBuf;
         protected int _decryptBytesRemaining;
-        protected ulong _encryptIC;
         protected ulong _decryptIC;
         protected byte[] _encryptBuf;
-        protected byte[] _decryptBuf;
 
-        private delegate void crypto_stream(byte[] c, byte[] m, ulong mlen, byte[] n, ulong ic, byte[] k);
-        private crypto_stream encryptor_delegate;
+        protected int _encryptBytesRemaining;
+        protected ulong _encryptIC;
+        private readonly crypto_stream encryptor_delegate;
 
         public SodiumEncryptor(string method, string password, bool cache)
             : base(method, password, cache)
@@ -51,13 +58,9 @@ namespace Shadowsocks.Encryption
             }
         }
 
-        private static Dictionary<string, EncryptorInfo> _ciphers = new Dictionary<string, EncryptorInfo> {
-                {"salsa20", new EncryptorInfo(32, 8, true, CIPHER_SALSA20)},
-                {"chacha20", new EncryptorInfo(32, 8, true, CIPHER_CHACHA20)},
-                {"xsalsa20", new EncryptorInfo(32, 24, true, CIPHER_XSALSA20)},
-                {"xchacha20", new EncryptorInfo(32, 24, true, CIPHER_XCHACHA20)},
-                {"chacha20-ietf", new EncryptorInfo(32, 12, true, CIPHER_CHACHA20_IETF)},
-        };
+        public override void Dispose()
+        {
+        }
 
         protected override Dictionary<string, EncryptorInfo> getCiphers()
         {
@@ -89,12 +92,13 @@ namespace Shadowsocks.Encryption
                 sodiumBuf = _decryptBuf;
                 iv = _decryptIV;
             }
-            int padding = bytesRemaining;
+
+            var padding = bytesRemaining;
             Buffer.BlockCopy(buf, 0, sodiumBuf, padding, length);
-            encryptor_delegate(sodiumBuf, sodiumBuf, (ulong)(padding + length), iv, ic, _key);
+            encryptor_delegate(sodiumBuf, sodiumBuf, (ulong) (padding + length), iv, ic, _key);
             Buffer.BlockCopy(sodiumBuf, padding, outbuf, 0, length);
             padding += length;
-            ic += (ulong)padding / SODIUM_BLOCK_SIZE;
+            ic += (ulong) padding / SODIUM_BLOCK_SIZE;
             bytesRemaining = padding % SODIUM_BLOCK_SIZE;
 
             if (isCipher)
@@ -123,13 +127,11 @@ namespace Shadowsocks.Encryption
             _decryptBytesRemaining = 0;
         }
 
-        void crypto_stream_chacha20_ietf_xor_ic(byte[] c, byte[] m, ulong mlen, byte[] n, ulong ic, byte[] k)
+        private void crypto_stream_chacha20_ietf_xor_ic(byte[] c, byte[] m, ulong mlen, byte[] n, ulong ic, byte[] k)
         {
-            Sodium.crypto_stream_chacha20_ietf_xor_ic(c, m, mlen, n, (uint)ic, k);
+            Sodium.crypto_stream_chacha20_ietf_xor_ic(c, m, mlen, n, (uint) ic, k);
         }
 
-        public override void Dispose()
-        {
-        }
+        private delegate void crypto_stream(byte[] c, byte[] m, ulong mlen, byte[] n, ulong ic, byte[] k);
     }
 }

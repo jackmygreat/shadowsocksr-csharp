@@ -1,9 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Drawing;
-using System.Text;
 using System.Windows.Forms;
 using Shadowsocks.Controller;
 using Shadowsocks.Model;
@@ -13,14 +10,14 @@ namespace Shadowsocks.View
 {
     public partial class PortSettingsForm : Form
     {
-        private ShadowsocksController controller;
         private Configuration _modifiedConfiguration;
         private int _oldSelectedIndex = -1;
+        private readonly ShadowsocksController controller;
 
         public PortSettingsForm(ShadowsocksController controller)
         {
             InitializeComponent();
-            this.Icon = Icon.FromHandle(Resources.ssw128.GetHicon());
+            Icon = Icon.FromHandle(Resources.ssw128.GetHicon());
             this.controller = controller;
             controller.ConfigChanged += controller_ConfigChanged;
 
@@ -41,7 +38,7 @@ namespace Shadowsocks.View
 
         private void UpdateTexts()
         {
-            this.Text = I18N.GetString("Port Settings");
+            Text = I18N.GetString("Port Settings");
             groupBox1.Text = I18N.GetString("Map Setting");
             labelType.Text = I18N.GetString("Type");
             labelID.Text = I18N.GetString("Server ID");
@@ -77,35 +74,31 @@ namespace Shadowsocks.View
         {
             SaveSelectedServer();
             controller.SaveServersPortMap(_modifiedConfiguration);
-            this.Close();
+            Close();
         }
 
         private void CancelButton_Click(object sender, EventArgs e)
         {
-            this.Close();
+            Close();
         }
 
         private void LoadConfiguration(Configuration configuration)
         {
             comboServers.Items.Clear();
             comboServers.Items.Add("");
-            Dictionary<string, int> server_group = new Dictionary<string, int>();
-            foreach (Server s in configuration.configs)
-            {
+            var server_group = new Dictionary<string, int>();
+            foreach (var s in configuration.configs)
                 if (!string.IsNullOrEmpty(s.group) && !server_group.ContainsKey(s.group))
                 {
                     comboServers.Items.Add("#" + s.group);
                     server_group[s.group] = 1;
                 }
-            }
-            foreach (Server s in configuration.configs)
-            {
-                comboServers.Items.Add(GetDisplayText(s));
-            }
+
+            foreach (var s in configuration.configs) comboServers.Items.Add(GetDisplayText(s));
             listPorts.Items.Clear();
-            int[] list = new int[configuration.portMap.Count];
-            int list_index = 0;
-            foreach (KeyValuePair<string, PortMapConfig> it in configuration.portMap)
+            var list = new int[configuration.portMap.Count];
+            var list_index = 0;
+            foreach (var it in configuration.portMap)
             {
                 try
                 {
@@ -113,32 +106,32 @@ namespace Shadowsocks.View
                 }
                 catch (FormatException)
                 {
-
                 }
+
                 list_index += 1;
             }
+
             Array.Sort(list);
-            for (int i = 0; i < list.Length; ++i)
+            for (var i = 0; i < list.Length; ++i)
             {
-                string remarks = "";
-                remarks = ((PortMapConfig)configuration.portMap[list[i].ToString()]).remarks ?? "";
-                listPorts.Items.Add(list[i].ToString() + "    " + remarks);
+                var remarks = "";
+                remarks = configuration.portMap[list[i].ToString()].remarks ?? "";
+                listPorts.Items.Add(list[i] + "    " + remarks);
             }
+
             _oldSelectedIndex = -1;
-            if (listPorts.Items.Count > 0)
-            {
-                listPorts.SelectedIndex = 0;
-            }
+            if (listPorts.Items.Count > 0) listPorts.SelectedIndex = 0;
         }
 
         private string ServerListText2Key(string text)
         {
             if (text != null)
             {
-                int pos = text.IndexOf(' ');
+                var pos = text.IndexOf(' ');
                 if (pos > 0)
                     return text.Substring(0, pos);
             }
+
             return text;
         }
 
@@ -146,14 +139,11 @@ namespace Shadowsocks.View
         {
             if (_oldSelectedIndex != -1)
             {
-                bool reflash_list = false;
-                string key = _oldSelectedIndex.ToString();
+                var reflash_list = false;
+                var key = _oldSelectedIndex.ToString();
                 if (key != NumLocalPort.Text)
                 {
-                    if (_modifiedConfiguration.portMap.ContainsKey(key))
-                    {
-                        _modifiedConfiguration.portMap.Remove(key);
-                    }
+                    if (_modifiedConfiguration.portMap.ContainsKey(key)) _modifiedConfiguration.portMap.Remove(key);
                     reflash_list = true;
                     key = NumLocalPort.Text;
                     try
@@ -165,51 +155,37 @@ namespace Shadowsocks.View
                         _oldSelectedIndex = 0;
                     }
                 }
+
                 if (!_modifiedConfiguration.portMap.ContainsKey(key))
-                {
                     _modifiedConfiguration.portMap[key] = new PortMapConfig();
-                }
-                PortMapConfig cfg = _modifiedConfiguration.portMap[key] as PortMapConfig;
+                var cfg = _modifiedConfiguration.portMap[key];
 
                 cfg.enable = checkEnable.Checked;
                 cfg.type = (PortMapType) comboBoxType.SelectedValue;
                 cfg.id = GetID(comboServers.Text);
                 cfg.server_addr = textAddr.Text;
-                if (cfg.remarks != textRemarks.Text)
-                {
-                    reflash_list = true;
-                }
+                if (cfg.remarks != textRemarks.Text) reflash_list = true;
                 cfg.remarks = textRemarks.Text;
                 cfg.server_port = Convert.ToInt32(NumTargetPort.Value);
-                if (reflash_list)
-                {
-                    LoadConfiguration(_modifiedConfiguration);
-                }
+                if (reflash_list) LoadConfiguration(_modifiedConfiguration);
             }
         }
 
         private void LoadSelectedServer()
         {
-            string key = ServerListText2Key((string)listPorts.SelectedItem);
-            Dictionary<string, int> server_group = new Dictionary<string, int>();
-            foreach (Server s in _modifiedConfiguration.configs)
-            {
+            var key = ServerListText2Key((string) listPorts.SelectedItem);
+            var server_group = new Dictionary<string, int>();
+            foreach (var s in _modifiedConfiguration.configs)
                 if (!string.IsNullOrEmpty(s.group) && !server_group.ContainsKey(s.group))
-                {
                     server_group[s.group] = 1;
-                }
-            }
             if (key != null && _modifiedConfiguration.portMap.ContainsKey(key))
             {
-                PortMapConfig cfg = _modifiedConfiguration.portMap[key] as PortMapConfig;
+                var cfg = _modifiedConfiguration.portMap[key];
 
                 checkEnable.Checked = cfg.enable;
                 comboBoxType.SelectedValue = cfg.type;
-                string text = GetIDText(cfg.id);
-                if (text.Length == 0 && server_group.ContainsKey(cfg.id))
-                {
-                    text = "#" + cfg.id;
-                }
+                var text = GetIDText(cfg.id);
+                if (text.Length == 0 && server_group.ContainsKey(cfg.id)) text = "#" + cfg.id;
                 comboServers.Text = text;
                 NumLocalPort.Text = key;
                 textAddr.Text = cfg.server_addr;
@@ -229,27 +205,21 @@ namespace Shadowsocks.View
 
         private string GetID(string text)
         {
-            if (text.IndexOf('#') >= 0)
-            {
-                return text.Substring(text.IndexOf('#') + 1);
-            }
+            if (text.IndexOf('#') >= 0) return text.Substring(text.IndexOf('#') + 1);
             return text;
         }
 
         private string GetDisplayText(Server s)
         {
-            return (!string.IsNullOrEmpty(s.group) ? s.group + " - " : "    - ") + s.FriendlyName() + "        #" + s.id;
+            return (!string.IsNullOrEmpty(s.group) ? s.group + " - " : "    - ") + s.FriendlyName() + "        #" +
+                   s.id;
         }
 
         private string GetIDText(string id)
         {
-            foreach (Server s in _modifiedConfiguration.configs)
-            {
+            foreach (var s in _modifiedConfiguration.configs)
                 if (id == s.id)
-                {
                     return GetDisplayText(s);
-                }
-            }
             return "";
         }
 
@@ -262,12 +232,10 @@ namespace Shadowsocks.View
         private void Add_Click(object sender, EventArgs e)
         {
             SaveSelectedServer();
-            string key = "0";
+            var key = "0";
             if (!_modifiedConfiguration.portMap.ContainsKey(key))
-            {
                 _modifiedConfiguration.portMap[key] = new PortMapConfig();
-            }
-            PortMapConfig cfg = _modifiedConfiguration.portMap[key] as PortMapConfig;
+            var cfg = _modifiedConfiguration.portMap[key];
 
             cfg.enable = checkEnable.Checked;
             cfg.type = (PortMapType) comboBoxType.SelectedValue;
@@ -283,11 +251,8 @@ namespace Shadowsocks.View
 
         private void Del_Click(object sender, EventArgs e)
         {
-            string key = _oldSelectedIndex.ToString();
-            if (_modifiedConfiguration.portMap.ContainsKey(key))
-            {
-                _modifiedConfiguration.portMap.Remove(key);
-            }
+            var key = _oldSelectedIndex.ToString();
+            if (_modifiedConfiguration.portMap.ContainsKey(key)) _modifiedConfiguration.portMap.Remove(key);
             _oldSelectedIndex = -1;
             LoadConfiguration(_modifiedConfiguration);
             LoadSelectedServer();

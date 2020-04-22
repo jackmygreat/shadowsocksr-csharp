@@ -7,24 +7,25 @@ namespace Shadowsocks.Obfs
         public ObfsException(string info)
             : base(info)
         {
-
         }
     }
+
     public class ServerInfo
     {
-        public string host;
-        public int port;
-        public string param;
-        public object data;
-        public int tcp_mss;
-        public int overhead;
         public int buffer_size;
+        public object data;
+        public int head_len;
+        public string host;
         public byte[] iv;
         public byte[] key;
         public string key_str;
-        public int head_len;
+        public int overhead;
+        public string param;
+        public int port;
+        public int tcp_mss;
 
-        public ServerInfo(string host, int port, string param, object data, byte[] iv, string key_str, byte[] key, int head_len, int tcp_mss, int overhead, int buffer_size)
+        public ServerInfo(string host, int port, string param, object data, byte[] iv, string key_str, byte[] key,
+            int head_len, int tcp_mss, int overhead, int buffer_size)
         {
             this.host = host;
             this.port = port;
@@ -44,6 +45,7 @@ namespace Shadowsocks.Obfs
             this.iv = iv;
         }
     }
+
     public interface IObfs : IDisposable
     {
         string Name();

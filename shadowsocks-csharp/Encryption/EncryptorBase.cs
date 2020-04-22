@@ -1,5 +1,4 @@
-﻿using System.Security.Cryptography;
-using System.Text;
+﻿using System.Text;
 
 namespace Shadowsocks.Encryption
 {
@@ -20,10 +19,14 @@ namespace Shadowsocks.Encryption
             this.name = name;
         }
     }
+
     public abstract class EncryptorBase
         : IEncryptor
     {
         public const int MAX_INPUT_SIZE = 65536;
+
+        protected string Method;
+        protected string Password;
 
         protected EncryptorBase(string method, string password)
         {
@@ -31,15 +34,6 @@ namespace Shadowsocks.Encryption
             Password = password;
         }
 
-        protected string Method;
-        protected string Password;
-
-        protected byte[] GetPasswordHash()
-        {
-            byte[] inputBytes = Encoding.UTF8.GetBytes(Password);
-            byte[] hash = MbedTLS.MD5(inputBytes);
-            return hash;
-        }
         public abstract bool SetIV(byte[] iv);
         public abstract void Encrypt(byte[] buf, int length, byte[] outbuf, out int outlength);
 
@@ -51,5 +45,12 @@ namespace Shadowsocks.Encryption
         public abstract byte[] getIV();
         public abstract byte[] getKey();
         public abstract EncryptorInfo getInfo();
+
+        protected byte[] GetPasswordHash()
+        {
+            var inputBytes = Encoding.UTF8.GetBytes(Password);
+            var hash = MbedTLS.MD5(inputBytes);
+            return hash;
+        }
     }
 }

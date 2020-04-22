@@ -16,25 +16,16 @@
 
 namespace ZXing.QrCode.Internal
 {
-   internal sealed class BlockPair
-   {
-      private readonly byte[] dataBytes;
-      private readonly byte[] errorCorrectionBytes;
+    internal sealed class BlockPair
+    {
+        public BlockPair(byte[] data, byte[] errorCorrection)
+        {
+            DataBytes = data;
+            ErrorCorrectionBytes = errorCorrection;
+        }
 
-      public BlockPair(byte[] data, byte[] errorCorrection)
-      {
-         dataBytes = data;
-         errorCorrectionBytes = errorCorrection;
-      }
+        public byte[] DataBytes { get; }
 
-      public byte[] DataBytes
-      {
-         get { return dataBytes; }
-      }
-
-      public byte[] ErrorCorrectionBytes
-      {
-         get { return errorCorrectionBytes; }
-      }
-   }
+        public byte[] ErrorCorrectionBytes { get; }
+    }
 }

@@ -1,17 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 using Shadowsocks.Controller;
 
 namespace Shadowsocks.Model
 {
     public class LRUCache<K, V>
     {
-        protected Dictionary<K, V> _store = new Dictionary<K, V>();
         protected Dictionary<K, DateTime> _key_2_time = new Dictionary<K, DateTime>();
-        protected Dictionary<DateTime, K> _time_2_key = new Dictionary<DateTime, K>();
         protected object _lock = new object();
+        protected Dictionary<K, V> _store = new Dictionary<K, V>();
         protected int _sweep_time;
+        protected Dictionary<DateTime, K> _time_2_key = new Dictionary<DateTime, K>();
 
         public LRUCache(int sweep_time = 60 * 60)
         {
@@ -37,10 +36,7 @@ namespace Shadowsocks.Model
         {
             lock (_lock)
             {
-                if ((DateTime.Now - _key_2_time[key]).TotalSeconds > _sweep_time)
-                {
-                    return true;
-                }
+                if ((DateTime.Now - _key_2_time[key]).TotalSeconds > _sweep_time) return true;
                 return false;
             }
         }
@@ -59,19 +55,17 @@ namespace Shadowsocks.Model
             {
                 if (_store.ContainsKey(key))
                 {
-                    DateTime t = _key_2_time[key];
+                    var t = _key_2_time[key];
                     _key_2_time.Remove(key);
                     _time_2_key.Remove(t);
                     t = DateTime.Now;
-                    while (_time_2_key.ContainsKey(t))
-                    {
-                        t = t.AddTicks(1);
-                    }
+                    while (_time_2_key.ContainsKey(t)) t = t.AddTicks(1);
                     _time_2_key[t] = key;
                     _key_2_time[key] = t;
                     return _store[key];
                 }
-                return default(V);
+
+                return default;
             }
         }
 
@@ -86,11 +80,9 @@ namespace Shadowsocks.Model
                     _key_2_time.Remove(key);
                     _time_2_key.Remove(t);
                 }
+
                 t = DateTime.Now;
-                while (_time_2_key.ContainsKey(t))
-                {
-                    t = t.AddTicks(1);
-                }
+                while (_time_2_key.ContainsKey(t)) t = t.AddTicks(1);
                 _time_2_key[t] = key;
                 _key_2_time[key] = t;
                 _store[key] = val;
@@ -117,32 +109,32 @@ namespace Shadowsocks.Model
         {
             lock (_lock)
             {
-                DateTime now = DateTime.Now;
-                int sweep = 0;
-                for (int i = 0; i < 100; ++i)
+                var now = DateTime.Now;
+                var sweep = 0;
+                for (var i = 0; i < 100; ++i)
                 {
-                    bool finish = false;
-                    foreach (KeyValuePair<DateTime, K> p in _time_2_key)
+                    var finish = false;
+                    foreach (var p in _time_2_key)
                     {
                         if ((now - p.Key).TotalSeconds < _sweep_time)
                         {
                             finish = true;
                             break;
                         }
+
                         _key_2_time.Remove(p.Value);
                         _time_2_key.Remove(p.Key);
                         _store.Remove(p.Value);
-                        Logging.Debug("sweep [" + p.Key.ToString() + "]: " + p.Value.ToString());
+                        Logging.Debug("sweep [" + p.Key + "]: " + p.Value);
                         sweep += 1;
                         break;
                     }
+
                     if (finish)
                         break;
                 }
-                if (sweep > 0)
-                {
-                    Logging.Debug("sweep " + sweep.ToString() + " items");
-                }
+
+                if (sweep > 0) Logging.Debug("sweep " + sweep + " items");
             }
         }
     }

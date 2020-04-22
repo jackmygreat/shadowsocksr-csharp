@@ -1,41 +1,40 @@
 ﻿using System;
 using System.Windows.Forms;
 using Microsoft.Win32;
+using Shadowsocks.Util;
 
 namespace Shadowsocks.Controller
 {
-    class AutoStartup
+    internal class AutoStartup
     {
-        static string Key = "ShadowsocksR_" + Application.StartupPath.GetHashCode();
-        static string RegistryRunPath = (IntPtr.Size == 4 ? @"Software\Microsoft\Windows\CurrentVersion\Run" : @"SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVersion\Run");
+        private static readonly string Key = "ShadowsocksR_" + Application.StartupPath.GetHashCode();
+
+        private static readonly string RegistryRunPath = IntPtr.Size == 4
+            ? @"Software\Microsoft\Windows\CurrentVersion\Run"
+            : @"SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVersion\Run";
 
         public static bool Set(bool enabled)
         {
             RegistryKey runKey = null;
             try
             {
-                string path = Util.Utils.GetExecutablePath();
+                var path = Utils.GetExecutablePath();
                 runKey = Registry.LocalMachine.OpenSubKey(RegistryRunPath, true);
                 if (enabled)
-                {
                     runKey.SetValue(Key, path);
-                }
                 else
-                {
                     runKey.DeleteValue(Key);
-                }
                 runKey.Close();
                 return true;
             }
             catch //(Exception e)
             {
                 //Logging.LogUsefulException(e);
-                return Util.Utils.RunAsAdmin("--setautorun") == 0;
+                return Utils.RunAsAdmin("--setautorun") == 0;
             }
             finally
             {
                 if (runKey != null)
-                {
                     try
                     {
                         runKey.Close();
@@ -44,26 +43,21 @@ namespace Shadowsocks.Controller
                     {
                         Logging.LogUsefulException(e);
                     }
-                }
             }
         }
 
         public static bool Switch()
         {
-            bool enabled = !Check();
+            var enabled = !Check();
             RegistryKey runKey = null;
             try
             {
-                string path = Util.Utils.GetExecutablePath();
+                var path = Utils.GetExecutablePath();
                 runKey = Registry.LocalMachine.OpenSubKey(RegistryRunPath, true);
                 if (enabled)
-                {
                     runKey.SetValue(Key, path);
-                }
                 else
-                {
                     runKey.DeleteValue(Key);
-                }
                 runKey.Close();
                 return true;
             }
@@ -75,7 +69,6 @@ namespace Shadowsocks.Controller
             finally
             {
                 if (runKey != null)
-                {
                     try
                     {
                         runKey.Close();
@@ -84,7 +77,6 @@ namespace Shadowsocks.Controller
                     {
                         Logging.LogUsefulException(e);
                     }
-                }
             }
         }
 
@@ -93,15 +85,13 @@ namespace Shadowsocks.Controller
             RegistryKey runKey = null;
             try
             {
-                string path = Util.Utils.GetExecutablePath();
+                var path = Utils.GetExecutablePath();
                 runKey = Registry.LocalMachine.OpenSubKey(RegistryRunPath, false);
-                string[] runList = runKey.GetValueNames();
+                var runList = runKey.GetValueNames();
                 runKey.Close();
-                foreach (string item in runList)
-                {
+                foreach (var item in runList)
                     if (item.Equals(Key))
                         return true;
-                }
                 return false;
             }
             catch (Exception e)
@@ -112,7 +102,6 @@ namespace Shadowsocks.Controller
             finally
             {
                 if (runKey != null)
-                {
                     try
                     {
                         runKey.Close();
@@ -121,7 +110,6 @@ namespace Shadowsocks.Controller
                     {
                         Logging.LogUsefulException(e);
                     }
-                }
             }
         }
     }

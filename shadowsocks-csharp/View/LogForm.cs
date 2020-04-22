@@ -1,22 +1,17 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
+using System.Diagnostics;
 using System.Drawing;
 using System.IO;
-using System.Text;
 using System.Windows.Forms;
 using Shadowsocks.Controller;
-using Shadowsocks.Model;
 using Shadowsocks.Properties;
 
 namespace Shadowsocks.View
 {
     public partial class LogForm : Form
     {
-        private readonly ShadowsocksController _controller;
-
         private const int MaxReadSize = 65536;
+        private readonly ShadowsocksController _controller;
 
         private string _currentLogFile;
         private string _currentLogFileName;
@@ -55,8 +50,8 @@ namespace Shadowsocks.View
         {
             try
             {
-                string argument = "/n" + ",/select," + Logging.LogFile;
-                System.Diagnostics.Process.Start("explorer.exe", argument);
+                var argument = "/n" + ",/select," + Logging.LogFile;
+                Process.Start("explorer.exe", argument);
             }
             catch (Exception e)
             {
@@ -83,7 +78,8 @@ namespace Shadowsocks.View
             {
                 using (
                     var reader =
-                        new StreamReader(new FileStream(newLogFile, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
+                        new StreamReader(
+                            new FileStream(newLogFile, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
                 )
                 {
                     if (_currentOffset == 0)
@@ -116,6 +112,7 @@ namespace Shadowsocks.View
             catch (ArgumentNullException)
             {
             }
+
             Text = $@"{I18N.GetString("Log Viewer")} {_currentLogFileName}";
         }
 
@@ -131,13 +128,10 @@ namespace Shadowsocks.View
 
         private void fontToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            using (FontDialog fontDialog = new FontDialog())
+            using (var fontDialog = new FontDialog())
             {
                 fontDialog.Font = logTextBox.Font;
-                if (fontDialog.ShowDialog() == DialogResult.OK)
-                {
-                    logTextBox.Font = fontDialog.Font;
-                }
+                if (fontDialog.ShowDialog() == DialogResult.OK) logTextBox.Font = fontDialog.Font;
             }
         }
 

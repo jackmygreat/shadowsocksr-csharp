@@ -9,14 +9,12 @@
  * Note: Based on DnsLite by Jaimon Mathew
  * */
 
-using System;
-
 namespace OpenDNS
 {
     /// <summary>
-    /// Query Result/Response Codes from server
+    ///     Query Result/Response Codes from server
     /// </summary>
-    public enum ResponseCodes : int
+    public enum ResponseCodes
     {
         NoError = 0,
         FormatError = 1,
@@ -29,9 +27,9 @@ namespace OpenDNS
 
 
     /// <summary>
-    /// DNS Resource Record Types
+    ///     DNS Resource Record Types
     /// </summary>
-    public enum Types : int
+    public enum Types
     {
         A = 1,
         AAAA = 28,
@@ -53,9 +51,9 @@ namespace OpenDNS
 
 
     /// <summary>
-    /// Query Class or Scope
+    ///     Query Class or Scope
     /// </summary>
-    public enum Classes : int
+    public enum Classes
     {
         IN = 1,
         CS = 2,

@@ -1,36 +1,30 @@
-﻿using Shadowsocks.Model;
-using Shadowsocks.Properties;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using System.IO.Compression;
-using System.Text;
 using System.Net.NetworkInformation;
-using System.Net;
-using System.Runtime.InteropServices;
+using System.Text;
 using System.Windows.Forms;
+using Shadowsocks.Model;
+using Shadowsocks.Properties;
+using Shadowsocks.Util;
 
 namespace Shadowsocks.Controller
 {
-    class HttpProxyRunner
+    internal class HttpProxyRunner
     {
+        private static readonly string runningPath;
+        private static readonly string _subPath = @"temp";
+        private static readonly string _exeNameNoExt = @"/ssr_privoxy";
+        private static readonly string _exeName = @"/ssr_privoxy.exe";
         private Process _process;
-        private static string runningPath;
-        private int _runningPort;
-        private static string _subPath = @"temp";
-        private static string _exeNameNoExt = @"/ssr_privoxy";
-        private static string _exeName = @"/ssr_privoxy.exe";
 
         static HttpProxyRunner()
         {
-            runningPath = Path.Combine(System.Windows.Forms.Application.StartupPath, _subPath);
-            _exeNameNoExt = System.IO.Path.GetFileNameWithoutExtension(Util.Utils.GetExecutablePath());
+            runningPath = Path.Combine(Application.StartupPath, _subPath);
+            _exeNameNoExt = Path.GetFileNameWithoutExtension(Utils.GetExecutablePath());
             _exeName = @"/" + _exeNameNoExt + @".exe";
-            if (!Directory.Exists(runningPath))
-            {
-                Directory.CreateDirectory(runningPath);
-            }
+            if (!Directory.Exists(runningPath)) Directory.CreateDirectory(runningPath);
             Kill();
             try
             {
@@ -43,13 +37,7 @@ namespace Shadowsocks.Controller
             }
         }
 
-        public int RunningPort
-        {
-            get
-            {
-                return _runningPort;
-            }
-        }
+        public int RunningPort { get; private set; }
 
         public bool HasExited()
         {
@@ -67,8 +55,8 @@ namespace Shadowsocks.Controller
 
         public static void Kill()
         {
-            Process[] existingPolipo = Process.GetProcessesByName(_exeNameNoExt);
-            foreach (Process p in existingPolipo)
+            var existingPolipo = Process.GetProcessesByName(_exeNameNoExt);
+            foreach (var p in existingPolipo)
             {
                 string str;
                 try
@@ -79,8 +67,8 @@ namespace Shadowsocks.Controller
                 {
                     continue;
                 }
+
                 if (str == Path.GetFullPath(runningPath + _exeName))
-                {
                     try
                     {
                         p.Kill();
@@ -90,7 +78,6 @@ namespace Shadowsocks.Controller
                     {
                         Console.WriteLine(e.ToString());
                     }
-                }
             }
         }
 
@@ -99,13 +86,13 @@ namespace Shadowsocks.Controller
             if (_process == null)
             {
                 Kill();
-                string polipoConfig = Resources.privoxy_conf;
-                _runningPort = this.GetFreePort();
+                var polipoConfig = Resources.privoxy_conf;
+                RunningPort = GetFreePort();
                 polipoConfig = polipoConfig.Replace("__SOCKS_PORT__", configuration.localPort.ToString());
-                polipoConfig = polipoConfig.Replace("__PRIVOXY_BIND_PORT__", _runningPort.ToString());
+                polipoConfig = polipoConfig.Replace("__PRIVOXY_BIND_PORT__", RunningPort.ToString());
                 polipoConfig = polipoConfig.Replace("__PRIVOXY_BIND_IP__", "127.0.0.1");
                 polipoConfig = polipoConfig.Replace("__BYPASS_ACTION__", "");
-                FileManager.ByteArrayToFile(runningPath + "/privoxy.conf", System.Text.Encoding.UTF8.GetBytes(polipoConfig));
+                FileManager.ByteArrayToFile(runningPath + "/privoxy.conf", Encoding.UTF8.GetBytes(polipoConfig));
 
                 Restart();
             }
@@ -120,7 +107,7 @@ namespace Shadowsocks.Controller
             _process.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
             _process.StartInfo.UseShellExecute = true;
             _process.StartInfo.CreateNoWindow = true;
-            _process.StartInfo.WorkingDirectory = System.Windows.Forms.Application.StartupPath;
+            _process.StartInfo.WorkingDirectory = Application.StartupPath;
             //_process.StartInfo.RedirectStandardOutput = true;
             //_process.StartInfo.RedirectStandardError = true;
             try
@@ -136,7 +123,6 @@ namespace Shadowsocks.Controller
         public void Stop()
         {
             if (_process != null)
-            {
                 try
                 {
                     _process.Kill();
@@ -150,31 +136,25 @@ namespace Shadowsocks.Controller
                 {
                     _process = null;
                 }
-            }
         }
 
         private int GetFreePort()
         {
-            int defaultPort = 60000;
+            var defaultPort = 60000;
             try
             {
-                IPGlobalProperties properties = IPGlobalProperties.GetIPGlobalProperties();
-                IPEndPoint[] tcpEndPoints = properties.GetActiveTcpListeners();
-                Random random = new Random(Util.Utils.GetExecutablePath().GetHashCode() ^ (int)DateTime.Now.Ticks);
+                var properties = IPGlobalProperties.GetIPGlobalProperties();
+                var tcpEndPoints = properties.GetActiveTcpListeners();
+                var random = new Random(Utils.GetExecutablePath().GetHashCode() ^ (int) DateTime.Now.Ticks);
 
-                List<int> usedPorts = new List<int>();
-                foreach (IPEndPoint endPoint in IPGlobalProperties.GetIPGlobalProperties().GetActiveTcpListeners())
-                {
+                var usedPorts = new List<int>();
+                foreach (var endPoint in IPGlobalProperties.GetIPGlobalProperties().GetActiveTcpListeners())
                     usedPorts.Add(endPoint.Port);
-                }
 
-                for (int nTry = 0; nTry < 1000; nTry++)
+                for (var nTry = 0; nTry < 1000; nTry++)
                 {
-                    int port = random.Next(10000, 65536);
-                    if (!usedPorts.Contains(port))
-                    {
-                        return port;
-                    }
+                    var port = random.Next(10000, 65536);
+                    if (!usedPorts.Contains(port)) return port;
                 }
             }
             catch (Exception e)
@@ -183,6 +163,7 @@ namespace Shadowsocks.Controller
                 Logging.LogUsefulException(e);
                 return defaultPort;
             }
+
             throw new Exception("No free port found.");
         }
     }

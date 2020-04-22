@@ -3,16 +3,14 @@ using System.Collections.Generic;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Text;
-using Shadowsocks.Controller;
-using Shadowsocks.Properties;
+using System.Windows.Forms;
 
 namespace Shadowsocks.Encryption
 {
-    class Libcrypto
+    internal class Libcrypto
     {
-        delegate IntPtr EncryptFunc();
-        const string DLLNAME = "libeay32";
-        static Dictionary<string, EncryptFunc> encrypt_func_map;
+        private const string DLLNAME = "libeay32";
+        private static readonly Dictionary<string, EncryptFunc> encrypt_func_map;
 
         static Libcrypto()
         {
@@ -27,12 +25,9 @@ namespace Shadowsocks.Encryption
                 //{
                 //    //Console.WriteLine(e.ToString());
                 //}
-                string runningPath = Path.Combine(System.Windows.Forms.Application.StartupPath, @"temp"); // Path.GetTempPath();
-                if (!Directory.Exists(runningPath))
-                {
-                    Directory.CreateDirectory(runningPath);
-                }
-                string dllPath = Path.Combine(runningPath, "libeay32.dll");
+                var runningPath = Path.Combine(Application.StartupPath, @"temp"); // Path.GetTempPath();
+                if (!Directory.Exists(runningPath)) Directory.CreateDirectory(runningPath);
+                var dllPath = Path.Combine(runningPath, "libeay32.dll");
                 try
                 {
                     //FileManager.UncompressFile(dllPath, Resources.libsscrypto_dll);
@@ -50,7 +45,7 @@ namespace Shadowsocks.Encryption
             {
                 if (encrypt_func_map == null && isSupport())
                 {
-                    Dictionary<string, EncryptFunc> func_map = new Dictionary<string, EncryptFunc>();
+                    var func_map = new Dictionary<string, EncryptFunc>();
                     func_map["rc4"] = EVP_rc4;
                     func_map["aes-128-cfb"] = EVP_aes_128_cfb;
                     encrypt_func_map = func_map;
@@ -63,7 +58,7 @@ namespace Shadowsocks.Encryption
         {
             try
             {
-                IntPtr cipher = EVP_get_cipherbyname(null);
+                var cipher = EVP_get_cipherbyname(null);
                 return true;
             }
             catch
@@ -74,52 +69,43 @@ namespace Shadowsocks.Encryption
 
         public static bool is_cipher(string cipher_name)
         {
-            string real_cipher_name = cipher_name;
-            if (cipher_name.StartsWith("rc4-md5"))
-            {
-                real_cipher_name = "rc4";
-            }
-            IntPtr ctx = IntPtr.Zero;
-            byte[] cipher_name_buf = Encoding.ASCII.GetBytes(real_cipher_name);
+            var real_cipher_name = cipher_name;
+            if (cipher_name.StartsWith("rc4-md5")) real_cipher_name = "rc4";
+            var ctx = IntPtr.Zero;
+            var cipher_name_buf = Encoding.ASCII.GetBytes(real_cipher_name);
             Array.Resize(ref cipher_name_buf, cipher_name_buf.Length + 1);
-            IntPtr cipher = EVP_get_cipherbyname(cipher_name_buf);
+            var cipher = EVP_get_cipherbyname(cipher_name_buf);
             return cipher != IntPtr.Zero;
         }
 
         public static IntPtr init(string cipher_name, byte[] key, byte[] iv, int op)
         {
-            IntPtr ctx = IntPtr.Zero;
-            string real_cipher_name = cipher_name;
-            if (cipher_name.StartsWith("rc4-md5"))
-            {
-                real_cipher_name = "rc4";
-            }
-            byte[] cipher_name_buf = Encoding.ASCII.GetBytes(real_cipher_name);
+            var ctx = IntPtr.Zero;
+            var real_cipher_name = cipher_name;
+            if (cipher_name.StartsWith("rc4-md5")) real_cipher_name = "rc4";
+            var cipher_name_buf = Encoding.ASCII.GetBytes(real_cipher_name);
             Array.Resize(ref cipher_name_buf, cipher_name_buf.Length + 1);
-            IntPtr cipher = EVP_get_cipherbyname(cipher_name_buf);
+            var cipher = EVP_get_cipherbyname(cipher_name_buf);
             if (cipher == IntPtr.Zero)
-            {
                 if (encrypt_func_map != null && encrypt_func_map.ContainsKey(real_cipher_name))
-                {
                     cipher = encrypt_func_map[real_cipher_name]();
-                }
-            }
             if (cipher != IntPtr.Zero)
             {
                 ctx = EVP_CIPHER_CTX_new();
-                int r = EVP_CipherInit_ex(ctx, cipher, IntPtr.Zero, key, iv, op);
+                var r = EVP_CipherInit_ex(ctx, cipher, IntPtr.Zero, key, iv, op);
                 if (r == 0)
                 {
                     clean(ctx);
                     return IntPtr.Zero;
                 }
             }
+
             return ctx;
         }
 
         public static int update(IntPtr ctx, byte[] data, int length, byte[] outbuf)
         {
-            int out_len = 0;
+            var out_len = 0;
             EVP_CipherUpdate(ctx, outbuf, ref out_len, data, length);
             return out_len;
         }
@@ -164,7 +150,9 @@ namespace Shadowsocks.Encryption
         public static extern int EVP_CipherInit_ex(IntPtr ctx, IntPtr cipher, IntPtr _, byte[] key, byte[] iv, int op);
 
         [DllImport(DLLNAME, CallingConvention = CallingConvention.Cdecl)]
-        public static extern void EVP_CipherUpdate(IntPtr ctx, byte[] output, ref int output_size, byte[] data, int len);
+        public static extern void EVP_CipherUpdate(IntPtr ctx, byte[] output, ref int output_size, byte[] data,
+            int len);
 
+        private delegate IntPtr EncryptFunc();
     }
 }

@@ -9,32 +9,32 @@
  * Note: Based on DnsLite by Jaimon Mathew
  * */
 
-using System;
 using System.Net;
 
 namespace OpenDNS
 {
 	/// <summary>
-	/// Address Resource Record
+	///     Address Resource Record
 	/// </summary>
 	public class Address : ResourceRecord
-	{
-		public string ResourceAddress; 
-		private IPAddress _IP; 
+    {
+        private IPAddress _IP;
+        public string ResourceAddress;
 
-		public IPAddress IP
-		{
-			get 
-			{ 
-				if (_IP == null) _IP = IPAddress.Parse(ResourceAddress); 
-				return _IP; 
-			}
-		}
+        public Address(string _Name, Types _Type, Classes _Class, int _TimeToLive, string _ResourceAddress) : base(
+            _Name, _Type, _Class, _TimeToLive)
+        {
+            ResourceAddress = _ResourceAddress;
+            RText = _ResourceAddress;
+        }
 
-		public Address(string _Name, Types _Type, Classes _Class, int _TimeToLive, string _ResourceAddress):base(_Name, _Type, _Class, _TimeToLive)
-		{
-			ResourceAddress = _ResourceAddress; 
-			RText = _ResourceAddress;
-		}
-	}
+        public IPAddress IP
+        {
+            get
+            {
+                if (_IP == null) _IP = IPAddress.Parse(ResourceAddress);
+                return _IP;
+            }
+        }
+    }
 }

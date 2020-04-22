@@ -1,58 +1,63 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
+using System.Diagnostics;
 using System.Drawing;
-using System.Text;
-using System.Windows.Forms;
 using System.Drawing.Imaging;
 using System.Runtime.InteropServices;
-using System.Diagnostics;
-
+using System.Windows.Forms;
 
 namespace Shadowsocks.View
 {
     public class QRCodeSplashForm : PerPixelAlphaForm
     {
+        private static readonly double FPS = 1.0 / 15 * 1000; // System.Windows.Forms.Timer resolution is 15ms
+        private static readonly double ANIMATION_TIME = 0.5;
+        private static readonly int ANIMATION_STEPS = (int) (ANIMATION_TIME * FPS);
+        private Bitmap bitmap;
+        private SolidBrush brush;
+        private int flashStep;
+        private Graphics g;
+        private int h;
+        private Pen pen;
+        private Stopwatch sw;
         public Rectangle TargetRect;
+
+        private Timer timer;
+        private int w;
+        private int x;
+        private int y;
 
         public QRCodeSplashForm()
         {
-            this.Load += QRCodeSplashForm_Load;
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
-            this.BackColor = System.Drawing.Color.White;
-            this.ClientSize = new System.Drawing.Size(1, 1);
-            this.ControlBox = false;
-            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
-            this.MaximizeBox = false;
-            this.MinimizeBox = false;
-            this.Name = "QRCodeSplashForm";
-            this.ShowIcon = false;
-            this.ShowInTaskbar = false;
-            this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Hide;
-            this.StartPosition = System.Windows.Forms.FormStartPosition.Manual;
-            this.TopMost = true;
+            Load += QRCodeSplashForm_Load;
+            AutoScaleMode = AutoScaleMode.None;
+            BackColor = Color.White;
+            ClientSize = new Size(1, 1);
+            ControlBox = false;
+            FormBorderStyle = FormBorderStyle.None;
+            MaximizeBox = false;
+            MinimizeBox = false;
+            Name = "QRCodeSplashForm";
+            ShowIcon = false;
+            ShowInTaskbar = false;
+            SizeGripStyle = SizeGripStyle.Hide;
+            StartPosition = FormStartPosition.Manual;
+            TopMost = true;
         }
 
-        private Timer timer;
-        private int flashStep;
-        private static double FPS = 1.0 / 15 * 1000; // System.Windows.Forms.Timer resolution is 15ms
-        private static double ANIMATION_TIME = 0.5;
-        private static int ANIMATION_STEPS = (int)(ANIMATION_TIME * FPS);
-        Stopwatch sw;
-        int x;
-        int y;
-        int w;
-        int h;
-        Bitmap bitmap;
-        Graphics g;
-        Pen pen;
-        SolidBrush brush;
+        protected override CreateParams CreateParams
+        {
+            get
+            {
+                var cp = base.CreateParams;
+                cp.ExStyle |= 0x00080000; // This form has to have the WS_EX_LAYERED extended style
+                return cp;
+            }
+        }
 
         private void QRCodeSplashForm_Load(object sender, EventArgs e)
         {
             SetStyle(ControlStyles.SupportsTransparentBackColor, true);
-            this.BackColor = Color.Transparent;
+            BackColor = Color.Transparent;
             flashStep = 0;
             x = 0;
             y = 0;
@@ -60,7 +65,7 @@ namespace Shadowsocks.View
             h = Height;
             sw = Stopwatch.StartNew();
             timer = new Timer();
-            timer.Interval = (int)(ANIMATION_TIME * 1000 / ANIMATION_STEPS);
+            timer.Interval = (int) (ANIMATION_TIME * 1000 / ANIMATION_STEPS);
             timer.Tick += timer_Tick;
             timer.Start();
             bitmap = new Bitmap(Width, Height, PixelFormat.Format32bppArgb);
@@ -69,31 +74,21 @@ namespace Shadowsocks.View
             brush = new SolidBrush(Color.FromArgb(30, Color.Red));
         }
 
-        protected override CreateParams CreateParams
+        private void timer_Tick(object sender, EventArgs e)
         {
-            get
-            {
-                CreateParams cp = base.CreateParams;
-                cp.ExStyle |= 0x00080000; // This form has to have the WS_EX_LAYERED extended style
-                return cp;
-            }
-        }
-
-        void timer_Tick(object sender, EventArgs e)
-        {
-            double percent = (double)sw.ElapsedMilliseconds / 1000.0 / (double)ANIMATION_TIME;
+            var percent = sw.ElapsedMilliseconds / 1000.0 / ANIMATION_TIME;
             if (percent < 1)
             {
                 // ease out
-                percent = 1 - Math.Pow((1 - percent), 4);
-                x = (int)(TargetRect.X * percent);
-                y = (int)(TargetRect.Y * percent);
-                w = (int)(TargetRect.Width * percent + this.Size.Width * (1 - percent));
-                h = (int)(TargetRect.Height * percent + this.Size.Height * (1 - percent));
+                percent = 1 - Math.Pow(1 - percent, 4);
+                x = (int) (TargetRect.X * percent);
+                y = (int) (TargetRect.Y * percent);
+                w = (int) (TargetRect.Width * percent + Size.Width * (1 - percent));
+                h = (int) (TargetRect.Height * percent + Size.Height * (1 - percent));
                 //codeRectView.Location = new Point(x, y);
                 //codeRectView.Size = new Size(w, h);
-                pen.Color = Color.FromArgb((int)(255 * percent), Color.Red);
-                brush.Color = Color.FromArgb((int)(30 * percent), Color.Red);
+                pen.Color = Color.FromArgb((int) (255 * percent), Color.Red);
+                brush.Color = Color.FromArgb((int) (30 * percent), Color.Red);
                 g.Clear(Color.Transparent);
                 g.FillRectangle(brush, x, y, w, h);
                 g.DrawRectangle(pen, x, y, w, h);
@@ -143,8 +138,9 @@ namespace Shadowsocks.View
                     pen.Dispose();
                     brush.Dispose();
                     bitmap.Dispose();
-                    this.Close();
+                    Close();
                 }
+
                 flashStep++;
             }
         }
@@ -152,59 +148,19 @@ namespace Shadowsocks.View
 
 
     // class that exposes needed win32 gdi functions.
-    class Win32
+    internal class Win32
     {
-
-        [StructLayout(LayoutKind.Sequential)]
-        public struct Point
-        {
-            public Int32 x;
-            public Int32 y;
-
-            public Point(Int32 x, Int32 y) { this.x = x; this.y = y; }
-        }
-
-
-        [StructLayout(LayoutKind.Sequential)]
-        public struct Size
-        {
-            public Int32 cx;
-            public Int32 cy;
-
-            public Size(Int32 cx, Int32 cy) { this.cx = cx; this.cy = cy; }
-        }
-
-
-        [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct ARGB
-        {
-            public byte Blue;
-            public byte Green;
-            public byte Red;
-            public byte Alpha;
-        }
-
-
-        [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        public struct BLENDFUNCTION
-        {
-            public byte BlendOp;
-            public byte BlendFlags;
-            public byte SourceConstantAlpha;
-            public byte AlphaFormat;
-        }
-
-
-        public const Int32 ULW_COLORKEY = 0x00000001;
-        public const Int32 ULW_ALPHA = 0x00000002;
-        public const Int32 ULW_OPAQUE = 0x00000004;
+        public const int ULW_COLORKEY = 0x00000001;
+        public const int ULW_ALPHA = 0x00000002;
+        public const int ULW_OPAQUE = 0x00000004;
 
         public const byte AC_SRC_OVER = 0x00;
         public const byte AC_SRC_ALPHA = 0x01;
 
 
         [DllImport("user32.dll", ExactSpelling = true, SetLastError = true)]
-        public static extern int UpdateLayeredWindow(IntPtr hwnd, IntPtr hdcDst, ref Point pptDst, ref Size psize, IntPtr hdcSrc, ref Point pprSrc, Int32 crKey, ref BLENDFUNCTION pblend, Int32 dwFlags);
+        public static extern int UpdateLayeredWindow(IntPtr hwnd, IntPtr hdcDst, ref Point pptDst, ref Size psize,
+            IntPtr hdcSrc, ref Point pprSrc, int crKey, ref BLENDFUNCTION pblend, int dwFlags);
 
         [DllImport("user32.dll", ExactSpelling = true, SetLastError = true)]
         public static extern IntPtr GetDC(IntPtr hWnd);
@@ -223,6 +179,53 @@ namespace Shadowsocks.View
 
         [DllImport("gdi32.dll", ExactSpelling = true, SetLastError = true)]
         public static extern int DeleteObject(IntPtr hObject);
+
+        [StructLayout(LayoutKind.Sequential)]
+        public struct Point
+        {
+            public int x;
+            public int y;
+
+            public Point(int x, int y)
+            {
+                this.x = x;
+                this.y = y;
+            }
+        }
+
+
+        [StructLayout(LayoutKind.Sequential)]
+        public struct Size
+        {
+            public int cx;
+            public int cy;
+
+            public Size(int cx, int cy)
+            {
+                this.cx = cx;
+                this.cy = cy;
+            }
+        }
+
+
+        [StructLayout(LayoutKind.Sequential, Pack = 1)]
+        private struct ARGB
+        {
+            public readonly byte Blue;
+            public readonly byte Green;
+            public readonly byte Red;
+            public readonly byte Alpha;
+        }
+
+
+        [StructLayout(LayoutKind.Sequential, Pack = 1)]
+        public struct BLENDFUNCTION
+        {
+            public byte BlendOp;
+            public byte BlendFlags;
+            public byte SourceConstantAlpha;
+            public byte AlphaFormat;
+        }
     }
 
 
@@ -235,6 +238,17 @@ namespace Shadowsocks.View
         {
             // This form should not have a border or else Windows will clip it.
             FormBorderStyle = FormBorderStyle.None;
+        }
+
+
+        protected override CreateParams CreateParams
+        {
+            get
+            {
+                var cp = base.CreateParams;
+                cp.ExStyle |= 0x00080000; // This form has to have the WS_EX_LAYERED extended style
+                return cp;
+            }
         }
 
         public void SetBitmap(Bitmap bitmap)
@@ -254,26 +268,27 @@ namespace Shadowsocks.View
             // 2. Select the bitmap with 32bpp with alpha-channel in the compatible DC;
             // 3. Call the UpdateLayeredWindow.
 
-            IntPtr screenDc = Win32.GetDC(IntPtr.Zero);
-            IntPtr memDc = Win32.CreateCompatibleDC(screenDc);
-            IntPtr hBitmap = IntPtr.Zero;
-            IntPtr oldBitmap = IntPtr.Zero;
+            var screenDc = Win32.GetDC(IntPtr.Zero);
+            var memDc = Win32.CreateCompatibleDC(screenDc);
+            var hBitmap = IntPtr.Zero;
+            var oldBitmap = IntPtr.Zero;
 
             try
             {
-                hBitmap = bitmap.GetHbitmap(Color.FromArgb(0));  // grab a GDI handle from this GDI+ bitmap
+                hBitmap = bitmap.GetHbitmap(Color.FromArgb(0)); // grab a GDI handle from this GDI+ bitmap
                 oldBitmap = Win32.SelectObject(memDc, hBitmap);
 
-                Win32.Size size = new Win32.Size(bitmap.Width, bitmap.Height);
-                Win32.Point pointSource = new Win32.Point(0, 0);
-                Win32.Point topPos = new Win32.Point(Left, Top);
-                Win32.BLENDFUNCTION blend = new Win32.BLENDFUNCTION();
+                var size = new Win32.Size(bitmap.Width, bitmap.Height);
+                var pointSource = new Win32.Point(0, 0);
+                var topPos = new Win32.Point(Left, Top);
+                var blend = new Win32.BLENDFUNCTION();
                 blend.BlendOp = Win32.AC_SRC_OVER;
                 blend.BlendFlags = 0;
                 blend.SourceConstantAlpha = opacity;
                 blend.AlphaFormat = Win32.AC_SRC_ALPHA;
 
-                Win32.UpdateLayeredWindow(Handle, screenDc, ref topPos, ref size, memDc, ref pointSource, 0, ref blend, Win32.ULW_ALPHA);
+                Win32.UpdateLayeredWindow(Handle, screenDc, ref topPos, ref size, memDc, ref pointSource, 0, ref blend,
+                    Win32.ULW_ALPHA);
             }
             finally
             {
@@ -284,18 +299,8 @@ namespace Shadowsocks.View
                     //Windows.DeleteObject(hBitmap); // The documentation says that we have to use the Windows.DeleteObject... but since there is no such method I use the normal DeleteObject from Win32 GDI and it's working fine without any resource leak.
                     Win32.DeleteObject(hBitmap);
                 }
+
                 Win32.DeleteDC(memDc);
-            }
-        }
-
-
-        protected override CreateParams CreateParams
-        {
-            get
-            {
-                CreateParams cp = base.CreateParams;
-                cp.ExStyle |= 0x00080000; // This form has to have the WS_EX_LAYERED extended style
-                return cp;
             }
         }
     }

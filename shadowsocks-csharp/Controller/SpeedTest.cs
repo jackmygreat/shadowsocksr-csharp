@@ -1,34 +1,25 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.Text;
 using Shadowsocks.Model;
+using Shadowsocks.Obfs;
 
 namespace Shadowsocks.Controller
 {
-
-    class SpeedTester
+    internal class SpeedTester
     {
-#if DEBUG
-        struct TransLog
-        {
-            public int dir;
-            public int size;
-        }
-#endif
+        public int download_cnt;
+        public string server;
+        public long sizeDownload;
+        public long sizeProtocolRecv;
+        public long sizeRecv;
+        private readonly List<TransLog> sizeTransfer = new List<TransLog>();
+        public long sizeUpload;
+        public DateTime timeBeginDownload;
+        public DateTime timeBeginUpload;
         public DateTime timeConnectBegin;
         public DateTime timeConnectEnd;
-        public DateTime timeBeginUpload;
-        public DateTime timeBeginDownload;
-        public long sizeUpload = 0;
-        public long sizeDownload = 0;
-        public long sizeProtocolRecv = 0;
-        public long sizeRecv = 0;
-        private List<TransLog> sizeTransfer = new List<TransLog>();
-        public string server;
         public ServerTransferTotal transfer;
-        public int upload_cnt = 0;
-        public int download_cnt = 0;
+        public int upload_cnt;
 
         public void BeginConnect()
         {
@@ -52,6 +43,7 @@ namespace Shadowsocks.Controller
                 timeBeginDownload = DateTime.Now;
                 return true;
             }
+
             return false;
         }
 
@@ -62,24 +54,20 @@ namespace Shadowsocks.Controller
             //else
             //    sizeDownloadList.Add(new TransLog(size, DateTime.Now));
             sizeDownload += size;
-            if (transfer != null && server != null)
-            {
-                transfer.AddDownload(server, size);
-            }
+            if (transfer != null && server != null) transfer.AddDownload(server, size);
             upload_cnt = 0;
             download_cnt += 1;
 #if DEBUG
             if (sizeTransfer.Count < 1024 * 128)
-            {
                 lock (sizeTransfer)
                 {
-                    sizeTransfer.Add(new TransLog { dir = 1, size = size });
+                    sizeTransfer.Add(new TransLog {dir = 1, size = size});
                 }
-            }
 #endif
             return download_cnt > 30;
             //return sizeDownload > 1024 * 256 && sizeDownload > (DateTime.Now - timeConnectEnd).TotalSeconds * 1024 * 16;
         }
+
         public void AddProtocolRecvSize(int size)
         {
             sizeProtocolRecv += size;
@@ -93,20 +81,15 @@ namespace Shadowsocks.Controller
         public bool AddUploadSize(int size)
         {
             sizeUpload += size;
-            if (transfer != null && server != null)
-            {
-                transfer.AddUpload(server, size);
-            }
+            if (transfer != null && server != null) transfer.AddUpload(server, size);
             upload_cnt = 1;
             download_cnt = 0;
 #if DEBUG
             if (sizeTransfer.Count < 1024 * 128)
-            {
                 lock (sizeTransfer)
                 {
-                    sizeTransfer.Add(new TransLog { dir = 0, size = size });
+                    sizeTransfer.Add(new TransLog {dir = 0, size = size});
                 }
-            }
 #endif
             return upload_cnt > 30;
             //return sizeUpload > 1024 * 256 && sizeUpload > (DateTime.Now - timeConnectEnd).TotalSeconds * 1024 * 16;
@@ -114,24 +97,32 @@ namespace Shadowsocks.Controller
 
         public string TransferLog()
         {
-            string ret = "";
+            var ret = "";
 #if DEBUG
-            int lastdir = -1;
-            foreach (TransLog t in sizeTransfer)
+            var lastdir = -1;
+            foreach (var t in sizeTransfer)
             {
                 if (t.dir != lastdir)
                 {
                     lastdir = t.dir;
-                    ret += (t.dir == 0 ? " u" : " d");
+                    ret += t.dir == 0 ? " u" : " d";
                 }
-                ret += " " + t.size.ToString();
+
+                ret += " " + t.size;
             }
 #endif
             return ret;
         }
+#if DEBUG
+        private struct TransLog
+        {
+            public int dir;
+            public int size;
+        }
+#endif
     }
 
-    class ProtocolResponseDetector
+    internal class ProtocolResponseDetector
     {
         public enum Protocol
         {
@@ -140,21 +131,19 @@ namespace Shadowsocks.Controller
             HTTP = 1,
             TLS = 2,
             SOCKS4 = 4,
-            SOCKS5 = 5,
+            SOCKS5 = 5
         }
-        protected Protocol protocol = Protocol.NOTBEGIN;
-        protected byte[] send_buffer = new byte[0];
-        protected byte[] recv_buffer = new byte[0];
 
-        public bool Pass
-        {
-            get; set;
-        }
+        protected Protocol protocol = Protocol.NOTBEGIN;
+        protected byte[] recv_buffer = new byte[0];
+        protected byte[] send_buffer = new byte[0];
 
         public ProtocolResponseDetector()
         {
             Pass = false;
         }
+
+        public bool Pass { get; set; }
 
         public void OnSend(byte[] send_data, int length)
         {
@@ -164,29 +153,30 @@ namespace Shadowsocks.Controller
 
             if (send_buffer.Length < 2) return;
 
-            int head_size = Obfs.ObfsBase.GetHeadSize(send_buffer, send_buffer.Length);
+            var head_size = ObfsBase.GetHeadSize(send_buffer, send_buffer.Length);
             if (send_buffer.Length - head_size < 0) return;
-            byte[] data = new byte[send_buffer.Length - head_size];
+            var data = new byte[send_buffer.Length - head_size];
             Array.Copy(send_buffer, head_size, data, 0, data.Length);
 
             if (data.Length < 2) return;
 
             if (data.Length > 8)
             {
-                if (data[0] == 22 && data[1] == 3 && (data[2] >= 0 && data[2] <= 3))
+                if (data[0] == 22 && data[1] == 3 && data[2] >= 0 && data[2] <= 3)
                 {
                     protocol = Protocol.TLS;
                     return;
                 }
+
                 if (data[0] == 'G' && data[1] == 'E' && data[2] == 'T' && data[3] == ' '
                     || data[0] == 'P' && data[1] == 'U' && data[2] == 'T' && data[3] == ' '
                     || data[0] == 'H' && data[1] == 'E' && data[2] == 'A' && data[3] == 'D' && data[4] == ' '
                     || data[0] == 'P' && data[1] == 'O' && data[2] == 'S' && data[3] == 'T' && data[4] == ' '
-                    || data[0] == 'C' && data[1] == 'O' && data[2] == 'N' && data[3] == 'N' && data[4] == 'E' && data[5] == 'C' && data[6] == 'T' && data[7] == ' '
-                    )
+                    || data[0] == 'C' && data[1] == 'O' && data[2] == 'N' && data[3] == 'N' && data[4] == 'E' &&
+                    data[5] == 'C' && data[6] == 'T' && data[7] == ' '
+                )
                 {
                     protocol = Protocol.HTTP;
-                    return;
                 }
             }
             else
@@ -194,6 +184,7 @@ namespace Shadowsocks.Controller
                 protocol = Protocol.UNKONWN;
             }
         }
+
         public int OnRecv(byte[] recv_data, int length)
         {
             if (protocol == Protocol.UNKONWN || protocol == Protocol.NOTBEGIN) return 0;
@@ -209,27 +200,25 @@ namespace Shadowsocks.Controller
                     Finish();
                     return 0;
                 }
-                else
-                {
-                    protocol = Protocol.UNKONWN;
-                    return 1;
-                    //throw new ProtocolException("Wrong http response");
-                }
+
+                protocol = Protocol.UNKONWN;
+                return 1;
+                //throw new ProtocolException("Wrong http response");
             }
-            else if (protocol == Protocol.TLS && recv_buffer.Length > 4)
+
+            if (protocol == Protocol.TLS && recv_buffer.Length > 4)
             {
                 if (recv_buffer[0] == 22 && recv_buffer[1] == 3)
                 {
                     Finish();
                     return 0;
                 }
-                else
-                {
-                    protocol = Protocol.UNKONWN;
-                    return 2;
-                    //throw new ProtocolException("Wrong tls response");
-                }
+
+                protocol = Protocol.UNKONWN;
+                return 2;
+                //throw new ProtocolException("Wrong tls response");
             }
+
             return 0;
         }
 

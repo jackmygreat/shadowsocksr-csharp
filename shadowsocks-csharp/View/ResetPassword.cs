@@ -1,13 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Drawing;
-using System.Text;
 using System.Windows.Forms;
+using Shadowsocks.Controller;
 using Shadowsocks.Model;
 using Shadowsocks.Properties;
-using Shadowsocks.Controller;
 
 namespace Shadowsocks.View
 {
@@ -16,15 +12,16 @@ namespace Shadowsocks.View
         public ResetPassword()
         {
             InitializeComponent();
-            this.Icon = Icon.FromHandle(Resources.ssw128.GetHicon());
-            this.Text = I18N.GetString("ResetPassword");
+            Icon = Icon.FromHandle(Resources.ssw128.GetHicon());
+            Text = I18N.GetString("ResetPassword");
         }
 
         private void buttonOK_Click(object sender, EventArgs e)
         {
-            if (textPassword.Text == textPassword2.Text && Configuration.SetPasswordTry(textOld.Text, textPassword.Text))
+            if (textPassword.Text == textPassword2.Text &&
+                Configuration.SetPasswordTry(textOld.Text, textPassword.Text))
             {
-                Configuration cfg = Configuration.Load();
+                var cfg = Configuration.Load();
                 Configuration.SetPassword(textPassword.Text);
                 Configuration.Save(cfg);
                 Close();
@@ -40,17 +37,11 @@ namespace Shadowsocks.View
             if (e.KeyCode == Keys.Enter)
             {
                 if (textOld.Focused)
-                {
                     textPassword.Focus();
-                }
                 else if (textPassword.Focused)
-                {
                     textPassword2.Focus();
-                }
                 else
-                {
                     buttonOK_Click(this, new EventArgs());
-                }
             }
         }
     }

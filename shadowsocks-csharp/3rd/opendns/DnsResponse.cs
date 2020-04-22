@@ -9,118 +9,75 @@
  * Note: Based on DnsLite by Jaimon Mathew
  * */
 
-using System;
-using System.Net;
-using System.Text;
-using System.Collections;
-using System.Diagnostics;
-
 namespace OpenDNS
 {
     /// <summary>
-    /// Response object as result of a dns query message. 
-    /// Will be null unless query succesfull. 
+    ///     Response object as result of a dns query message.
+    ///     Will be null unless query succesfull.
     /// </summary>
     public class DnsResponse
     {
-        private int _QueryID;
-
         //Property Internals
-        private bool _AuthorativeAnswer;
-        private bool _IsTruncated;
-        private bool _RecursionDesired;
-        private bool _RecursionAvailable;
-        private ResponseCodes _ResponseCode;
 
-        private ResourceRecordCollection _ResourceRecords;
-        private ResourceRecordCollection _Answers;
-        private ResourceRecordCollection _Authorities;
-        private ResourceRecordCollection _AdditionalRecords;
+        private readonly ResourceRecordCollection _ResourceRecords;
+
+        public DnsResponse(int ID, bool AA, bool TC, bool RD, bool RA, int RC)
+        {
+            QueryID = ID;
+            AuthorativeAnswer = AA;
+            IsTruncated = TC;
+            RecursionRequested = RD;
+            RecursionAvailable = RA;
+            ResponseCode = (ResponseCodes) RC;
+
+            _ResourceRecords = new ResourceRecordCollection();
+            Answers = new ResourceRecordCollection();
+            Authorities = new ResourceRecordCollection();
+            AdditionalRecords = new ResourceRecordCollection();
+        }
 
         //Read Only Public Properties
-        public int QueryID
-        {
-            get { return _QueryID; }
-        }
+        public int QueryID { get; }
 
-        public bool AuthorativeAnswer
-        {
-            get { return _AuthorativeAnswer; }
-        }
+        public bool AuthorativeAnswer { get; }
 
-        public bool IsTruncated
-        {
-            get { return _IsTruncated; }
-        }
+        public bool IsTruncated { get; }
 
-        public bool RecursionRequested
-        {
-            get { return _RecursionDesired; }
-        }
+        public bool RecursionRequested { get; }
 
-        public bool RecursionAvailable
-        {
-            get { return _RecursionAvailable; }
-        }
+        public bool RecursionAvailable { get; }
 
-        public ResponseCodes ResponseCode
-        {
-            get { return _ResponseCode; }
-        }
+        public ResponseCodes ResponseCode { get; }
 
-        public ResourceRecordCollection Answers
-        {
-            get { return _Answers; }
-        }
+        public ResourceRecordCollection Answers { get; }
 
-        public ResourceRecordCollection Authorities
-        {
-            get { return _Authorities; }
-        }
+        public ResourceRecordCollection Authorities { get; }
 
-        public ResourceRecordCollection AdditionalRecords
-        {
-            get { return _AdditionalRecords; }
-        }
+        public ResourceRecordCollection AdditionalRecords { get; }
 
         /// <summary>
-        /// Unified collection of Resource Records from Answers, 
-        /// Authorities and Additional. NOT IN REALTIME SYNC. 
-        /// 
+        ///     Unified collection of Resource Records from Answers,
+        ///     Authorities and Additional. NOT IN REALTIME SYNC.
         /// </summary>
         public ResourceRecordCollection ResourceRecords
         {
             get
             {
-                if (_ResourceRecords.Count == 0 && _Answers.Count > 0 && _Authorities.Count > 0 && _AdditionalRecords.Count > 0)
+                if (_ResourceRecords.Count == 0 && Answers.Count > 0 && Authorities.Count > 0 &&
+                    AdditionalRecords.Count > 0)
                 {
                     foreach (ResourceRecord rr in Answers)
-                        this._ResourceRecords.Add(rr);
+                        _ResourceRecords.Add(rr);
 
                     foreach (ResourceRecord rr in Authorities)
-                        this._ResourceRecords.Add(rr);
+                        _ResourceRecords.Add(rr);
 
                     foreach (ResourceRecord rr in AdditionalRecords)
-                        this._ResourceRecords.Add(rr);
+                        _ResourceRecords.Add(rr);
                 }
 
                 return _ResourceRecords;
             }
-        }
-
-        public DnsResponse(int ID, bool AA, bool TC, bool RD, bool RA, int RC)
-        {
-            this._QueryID = ID;
-            this._AuthorativeAnswer = AA;
-            this._IsTruncated = TC;
-            this._RecursionDesired = RD;
-            this._RecursionAvailable = RA;
-            this._ResponseCode = (ResponseCodes)RC;
-
-            this._ResourceRecords = new ResourceRecordCollection();
-            this._Answers = new ResourceRecordCollection();
-            this._Authorities = new ResourceRecordCollection();
-            this._AdditionalRecords = new ResourceRecordCollection();
         }
     }
 }

@@ -1,20 +1,52 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Runtime.InteropServices;
-using System.Text;
 
 namespace Shadowsocks.Encryption
 {
     public class LibcryptoEncryptor
         : IVEncryptor, IDisposable
     {
-        const int CIPHER_AES = 1;
-        const int CIPHER_RC4 = 2;
-        const int CIPHER_CAMELLIA = 3;
-        const int CIPHER_OTHER_CFB = 4;
+        private const int CIPHER_AES = 1;
+        private const int CIPHER_RC4 = 2;
+        private const int CIPHER_CAMELLIA = 3;
+        private const int CIPHER_OTHER_CFB = 4;
+
+        private static readonly Dictionary<string, EncryptorInfo> _ciphers = new Dictionary<string, EncryptorInfo>
+        {
+            {"aes-128-cbc", new EncryptorInfo(16, 16, false, CIPHER_AES)},
+            {"aes-192-cbc", new EncryptorInfo(24, 16, false, CIPHER_AES)},
+            {"aes-256-cbc", new EncryptorInfo(32, 16, false, CIPHER_AES)},
+
+            {"aes-128-ctr", new EncryptorInfo(16, 16, true, CIPHER_AES)},
+            {"aes-192-ctr", new EncryptorInfo(24, 16, true, CIPHER_AES)},
+            {"aes-256-ctr", new EncryptorInfo(32, 16, true, CIPHER_AES)},
+            {"aes-128-cfb", new EncryptorInfo(16, 16, true, CIPHER_AES)},
+            {"aes-192-cfb", new EncryptorInfo(24, 16, true, CIPHER_AES)},
+            {"aes-256-cfb", new EncryptorInfo(32, 16, true, CIPHER_AES)},
+            {"aes-128-cfb8", new EncryptorInfo(16, 16, true, CIPHER_AES)},
+            {"aes-192-cfb8", new EncryptorInfo(24, 16, true, CIPHER_AES)},
+            {"aes-256-cfb8", new EncryptorInfo(32, 16, true, CIPHER_AES)},
+            {"aes-128-cfb1", new EncryptorInfo(16, 16, false, CIPHER_AES)},
+            {"aes-192-cfb1", new EncryptorInfo(24, 16, false, CIPHER_AES)},
+            {"aes-256-cfb1", new EncryptorInfo(32, 16, false, CIPHER_AES)},
+            {"camellia-128-cfb", new EncryptorInfo(16, 16, false, CIPHER_CAMELLIA)},
+            {"camellia-192-cfb", new EncryptorInfo(24, 16, false, CIPHER_CAMELLIA)},
+            {"camellia-256-cfb", new EncryptorInfo(32, 16, false, CIPHER_CAMELLIA)},
+            {"bf-cfb", new EncryptorInfo(16, 8, false, CIPHER_OTHER_CFB)},
+            {"cast5-cfb", new EncryptorInfo(16, 8, false, CIPHER_OTHER_CFB)},
+            //{"des-cfb", new EncryptorInfo(8, 8, true, CIPHER_OTHER_CFB)}, // weak
+            //{"des-ede3-cfb", new EncryptorInfo(24, 8, true, CIPHER_OTHER_CFB)},
+            {"idea-cfb", new EncryptorInfo(16, 8, false, CIPHER_OTHER_CFB)},
+            {"rc2-cfb", new EncryptorInfo(16, 8, false, CIPHER_OTHER_CFB)},
+            {"rc4", new EncryptorInfo(16, 0, true, CIPHER_RC4)}, // weak
+            {"rc4-md5", new EncryptorInfo(16, 16, true, CIPHER_RC4)}, // weak
+            {"rc4-md5-6", new EncryptorInfo(16, 6, true, CIPHER_RC4)}, // weak
+            {"seed-cfb", new EncryptorInfo(16, 16, false, CIPHER_OTHER_CFB)}
+        };
+
+        private IntPtr _decryptCtx = IntPtr.Zero;
 
         private IntPtr _encryptCtx = IntPtr.Zero;
-        private IntPtr _decryptCtx = IntPtr.Zero;
 
         public LibcryptoEncryptor(string method, string password, bool cache)
             : base(method, password, cache)
@@ -24,51 +56,12 @@ namespace Shadowsocks.Encryption
 
         public static void InitAviable()
         {
-            List<string> remove_ciphers = new List<string>();
-            foreach (string cipher in _ciphers.Keys)
-            {
+            var remove_ciphers = new List<string>();
+            foreach (var cipher in _ciphers.Keys)
                 if (!Libcrypto.is_cipher(cipher))
-                {
                     remove_ciphers.Add(cipher);
-                }
-            }
-            foreach (string cipher in remove_ciphers)
-            {
-                _ciphers.Remove(cipher);
-            }
+            foreach (var cipher in remove_ciphers) _ciphers.Remove(cipher);
         }
-
-        private static Dictionary<string, EncryptorInfo> _ciphers = new Dictionary<string, EncryptorInfo> {
-                {"aes-128-cbc", new EncryptorInfo(16, 16, false, CIPHER_AES)},
-                {"aes-192-cbc", new EncryptorInfo(24, 16, false, CIPHER_AES)},
-                {"aes-256-cbc", new EncryptorInfo(32, 16, false, CIPHER_AES)},
-
-                {"aes-128-ctr", new EncryptorInfo(16, 16, true, CIPHER_AES)},
-                {"aes-192-ctr", new EncryptorInfo(24, 16, true, CIPHER_AES)},
-                {"aes-256-ctr", new EncryptorInfo(32, 16, true, CIPHER_AES)},
-                {"aes-128-cfb", new EncryptorInfo(16, 16, true, CIPHER_AES)},
-                {"aes-192-cfb", new EncryptorInfo(24, 16, true, CIPHER_AES)},
-                {"aes-256-cfb", new EncryptorInfo(32, 16, true, CIPHER_AES)},
-                {"aes-128-cfb8", new EncryptorInfo(16, 16, true, CIPHER_AES)},
-                {"aes-192-cfb8", new EncryptorInfo(24, 16, true, CIPHER_AES)},
-                {"aes-256-cfb8", new EncryptorInfo(32, 16, true, CIPHER_AES)},
-                {"aes-128-cfb1", new EncryptorInfo(16, 16, false, CIPHER_AES)},
-                {"aes-192-cfb1", new EncryptorInfo(24, 16, false, CIPHER_AES)},
-                {"aes-256-cfb1", new EncryptorInfo(32, 16, false, CIPHER_AES)},
-                {"camellia-128-cfb", new EncryptorInfo(16, 16, false, CIPHER_CAMELLIA)},
-                {"camellia-192-cfb", new EncryptorInfo(24, 16, false, CIPHER_CAMELLIA)},
-                {"camellia-256-cfb", new EncryptorInfo(32, 16, false, CIPHER_CAMELLIA)},
-                {"bf-cfb", new EncryptorInfo(16, 8, false, CIPHER_OTHER_CFB)},
-                {"cast5-cfb", new EncryptorInfo(16, 8, false, CIPHER_OTHER_CFB)},
-                //{"des-cfb", new EncryptorInfo(8, 8, true, CIPHER_OTHER_CFB)}, // weak
-                //{"des-ede3-cfb", new EncryptorInfo(24, 8, true, CIPHER_OTHER_CFB)},
-                {"idea-cfb", new EncryptorInfo(16, 8, false, CIPHER_OTHER_CFB)},
-                {"rc2-cfb", new EncryptorInfo(16, 8, false, CIPHER_OTHER_CFB)},
-                {"rc4", new EncryptorInfo(16, 0, true, CIPHER_RC4)}, // weak
-                {"rc4-md5", new EncryptorInfo(16, 16, true, CIPHER_RC4)}, // weak
-                {"rc4-md5-6", new EncryptorInfo(16, 6, true, CIPHER_RC4)}, // weak
-                {"seed-cfb", new EncryptorInfo(16, 16, false, CIPHER_OTHER_CFB)},
-        };
 
         public static List<string> SupportedCiphers()
         {
@@ -93,7 +86,7 @@ namespace Shadowsocks.Encryption
             byte[] realkey;
             if (_method.StartsWith("rc4-md5"))
             {
-                byte[] temp = new byte[keyLen + ivLen];
+                var temp = new byte[keyLen + ivLen];
                 realkey = new byte[keyLen];
                 Array.Copy(_key, 0, temp, 0, keyLen);
                 Array.Copy(iv, 0, temp, keyLen, ivLen);
@@ -103,6 +96,7 @@ namespace Shadowsocks.Encryption
             {
                 realkey = _key;
             }
+
             if (isCipher)
             {
                 if (_encryptCtx == IntPtr.Zero)
@@ -128,16 +122,15 @@ namespace Shadowsocks.Encryption
                 }
             }
         }
+
         protected override void cipherUpdate(bool isCipher, int length, byte[] buf, byte[] outbuf)
         {
-            if (_disposed)
-            {
-                throw new ObjectDisposedException(this.ToString());
-            }
-            int len = Libcrypto.update(isCipher ? _encryptCtx : _decryptCtx, buf, length, outbuf);
+            if (_disposed) throw new ObjectDisposedException(ToString());
+            var len = Libcrypto.update(isCipher ? _encryptCtx : _decryptCtx, buf, length, outbuf);
         }
 
         #region IDisposable
+
         private bool _disposed;
 
         public override void Dispose()
@@ -155,10 +148,7 @@ namespace Shadowsocks.Encryption
         {
             lock (this)
             {
-                if (_disposed)
-                {
-                    return;
-                }
+                if (_disposed) return;
                 _disposed = true;
             }
 
@@ -172,6 +162,7 @@ namespace Shadowsocks.Encryption
                 _decryptCtx = IntPtr.Zero;
             }
         }
+
         #endregion
     }
 }
