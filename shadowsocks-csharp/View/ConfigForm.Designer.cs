@@ -23,8 +23,8 @@
         #region Windows 窗体设计器生成的代码
 
         /// <summary>
-        /// 设计器支持所需的方法 - 不要
-        /// 使用代码编辑器修改此方法的内容。
+        /// Required method for Designer support - do not modify
+        /// the contents of this method with the code editor.
         /// </summary>
         private void InitializeComponent()
         {
@@ -77,12 +77,12 @@
             this.tableLayoutPanel3 = new System.Windows.Forms.TableLayoutPanel();
             this.btnCancel = new System.Windows.Forms.Button();
             this.btnOK = new System.Windows.Forms.Button();
-            ((System.ComponentModel.ISupportInitialize)(this.picQRcode)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize) (this.picQRcode)).BeginInit();
             this.tableLayoutPanel2.SuspendLayout();
             this.ServerGroupBox.SuspendLayout();
             this.tableLayoutPanel1.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.nudServerPort)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.nudUdpPort)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize) (this.nudServerPort)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize) (this.nudUdpPort)).BeginInit();
             this.tableLayoutPanel7.SuspendLayout();
             this.tableLayoutPanel4.SuspendLayout();
             this.tableLayoutPanel5.SuspendLayout();
@@ -129,7 +129,7 @@
             // 
             this.picQRcode.Anchor = System.Windows.Forms.AnchorStyles.None;
             this.picQRcode.BackColor = System.Drawing.SystemColors.Control;
-            this.picQRcode.Location = new System.Drawing.Point(4, 273);
+            this.picQRcode.Location = new System.Drawing.Point(4, 120);
             this.picQRcode.Margin = new System.Windows.Forms.Padding(4);
             this.picQRcode.Name = "picQRcode";
             this.picQRcode.Size = new System.Drawing.Size(260, 200);
@@ -141,7 +141,7 @@
             // 
             this.lstServers.Dock = System.Windows.Forms.DockStyle.Fill;
             this.lstServers.HorizontalScrollbar = true;
-            this.lstServers.ItemHeight = 31;
+            this.lstServers.ItemHeight = 12;
             this.lstServers.Location = new System.Drawing.Point(0, 0);
             this.lstServers.Margin = new System.Windows.Forms.Padding(0);
             this.lstServers.Name = "lstServers";
@@ -168,7 +168,7 @@
             this.tableLayoutPanel2.RowCount = 2;
             this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.tableLayoutPanel2.Size = new System.Drawing.Size(1253, 804);
+            this.tableLayoutPanel2.Size = new System.Drawing.Size(1253, 497);
             this.tableLayoutPanel2.TabIndex = 7;
             // 
             // ServerGroupBox
@@ -180,7 +180,7 @@
             this.ServerGroupBox.Location = new System.Drawing.Point(320, 0);
             this.ServerGroupBox.Margin = new System.Windows.Forms.Padding(12, 0, 0, 0);
             this.ServerGroupBox.Name = "ServerGroupBox";
-            this.ServerGroupBox.Size = new System.Drawing.Size(650, 753);
+            this.ServerGroupBox.Size = new System.Drawing.Size(650, 446);
             this.ServerGroupBox.TabIndex = 20;
             this.ServerGroupBox.TabStop = false;
             this.ServerGroupBox.Text = "Server";
@@ -225,7 +225,7 @@
             this.tableLayoutPanel1.Controls.Add(this.txtProtocolParam, 1, 6);
             this.tableLayoutPanel1.Controls.Add(this.chkIP, 0, 1);
             this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tableLayoutPanel1.Location = new System.Drawing.Point(3, 34);
+            this.tableLayoutPanel1.Location = new System.Drawing.Point(3, 17);
             this.tableLayoutPanel1.Margin = new System.Windows.Forms.Padding(0);
             this.tableLayoutPanel1.Name = "tableLayoutPanel1";
             this.tableLayoutPanel1.Padding = new System.Windows.Forms.Padding(3);
@@ -248,24 +248,18 @@
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.tableLayoutPanel1.Size = new System.Drawing.Size(644, 716);
+            this.tableLayoutPanel1.Size = new System.Drawing.Size(644, 426);
             this.tableLayoutPanel1.TabIndex = 0;
             // 
             // cmbObfs
             // 
             this.cmbObfs.Dock = System.Windows.Forms.DockStyle.Top;
             this.cmbObfs.FormattingEnabled = true;
-            this.cmbObfs.Items.AddRange(new object[] {
-            "plain",
-            "http_simple",
-            "http_post",
-            "random_head",
-            "tls1.2_ticket_auth",
-            "tls1.2_ticket_fastauth"});
-            this.cmbObfs.Location = new System.Drawing.Point(219, 282);
+            this.cmbObfs.Items.AddRange(new object[] {"plain", "http_simple", "http_post", "random_head", "tls1.2_ticket_auth", "tls1.2_ticket_fastauth"});
+            this.cmbObfs.Location = new System.Drawing.Point(102, 176);
             this.cmbObfs.Margin = new System.Windows.Forms.Padding(3, 3, 3, 8);
             this.cmbObfs.Name = "cmbObfs";
-            this.cmbObfs.Size = new System.Drawing.Size(419, 39);
+            this.cmbObfs.Size = new System.Drawing.Size(536, 20);
             this.cmbObfs.TabIndex = 19;
             this.cmbObfs.TextChanged += new System.EventHandler(this.ObfsCombo_TextChanged);
             // 
@@ -273,11 +267,11 @@
             // 
             this.lblObfs.AutoSize = true;
             this.lblObfs.Dock = System.Windows.Forms.DockStyle.Top;
-            this.lblObfs.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(128)))), ((int)(((byte)(0)))), ((int)(((byte)(192)))));
-            this.lblObfs.Location = new System.Drawing.Point(6, 282);
+            this.lblObfs.ForeColor = System.Drawing.Color.FromArgb(((int) (((byte) (128)))), ((int) (((byte) (0)))), ((int) (((byte) (192)))));
+            this.lblObfs.Location = new System.Drawing.Point(6, 176);
             this.lblObfs.Margin = new System.Windows.Forms.Padding(3);
             this.lblObfs.Name = "lblObfs";
-            this.lblObfs.Size = new System.Drawing.Size(207, 32);
+            this.lblObfs.Size = new System.Drawing.Size(90, 12);
             this.lblObfs.TabIndex = 18;
             this.lblObfs.Text = "Obfs";
             this.lblObfs.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
@@ -286,10 +280,10 @@
             // 
             this.lblServerPort.AutoSize = true;
             this.lblServerPort.Dock = System.Windows.Forms.DockStyle.Top;
-            this.lblServerPort.Location = new System.Drawing.Point(6, 50);
+            this.lblServerPort.Location = new System.Drawing.Point(6, 33);
             this.lblServerPort.Margin = new System.Windows.Forms.Padding(3);
             this.lblServerPort.Name = "lblServerPort";
-            this.lblServerPort.Size = new System.Drawing.Size(207, 32);
+            this.lblServerPort.Size = new System.Drawing.Size(90, 12);
             this.lblServerPort.TabIndex = 8;
             this.lblServerPort.Text = "Server Port";
             this.lblServerPort.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
@@ -297,10 +291,10 @@
             // txtIP
             // 
             this.txtIP.Dock = System.Windows.Forms.DockStyle.Top;
-            this.txtIP.Location = new System.Drawing.Point(219, 6);
+            this.txtIP.Location = new System.Drawing.Point(102, 6);
             this.txtIP.MaxLength = 512;
             this.txtIP.Name = "txtIP";
-            this.txtIP.Size = new System.Drawing.Size(419, 38);
+            this.txtIP.Size = new System.Drawing.Size(536, 21);
             this.txtIP.TabIndex = 7;
             this.txtIP.UseSystemPasswordChar = true;
             this.txtIP.WordWrap = false;
@@ -308,23 +302,19 @@
             // nudServerPort
             // 
             this.nudServerPort.Dock = System.Windows.Forms.DockStyle.Top;
-            this.nudServerPort.Location = new System.Drawing.Point(219, 50);
-            this.nudServerPort.Maximum = new decimal(new int[] {
-            65535,
-            0,
-            0,
-            0});
+            this.nudServerPort.Location = new System.Drawing.Point(102, 33);
+            this.nudServerPort.Maximum = new decimal(new int[] {65535, 0, 0, 0});
             this.nudServerPort.Name = "nudServerPort";
-            this.nudServerPort.Size = new System.Drawing.Size(419, 38);
+            this.nudServerPort.Size = new System.Drawing.Size(536, 21);
             this.nudServerPort.TabIndex = 9;
             // 
             // txtPassword
             // 
             this.txtPassword.Dock = System.Windows.Forms.DockStyle.Top;
-            this.txtPassword.Location = new System.Drawing.Point(219, 94);
+            this.txtPassword.Location = new System.Drawing.Point(102, 60);
             this.txtPassword.MaxLength = 256;
             this.txtPassword.Name = "txtPassword";
-            this.txtPassword.Size = new System.Drawing.Size(419, 38);
+            this.txtPassword.Size = new System.Drawing.Size(536, 21);
             this.txtPassword.TabIndex = 11;
             this.txtPassword.UseSystemPasswordChar = true;
             this.txtPassword.WordWrap = false;
@@ -333,10 +323,10 @@
             // 
             this.lblEncryption.AutoSize = true;
             this.lblEncryption.Dock = System.Windows.Forms.DockStyle.Top;
-            this.lblEncryption.Location = new System.Drawing.Point(6, 138);
+            this.lblEncryption.Location = new System.Drawing.Point(6, 87);
             this.lblEncryption.Margin = new System.Windows.Forms.Padding(3);
             this.lblEncryption.Name = "lblEncryption";
-            this.lblEncryption.Size = new System.Drawing.Size(207, 32);
+            this.lblEncryption.Size = new System.Drawing.Size(90, 12);
             this.lblEncryption.TabIndex = 12;
             this.lblEncryption.Text = "Encryption";
             this.lblEncryption.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
@@ -345,19 +335,19 @@
             // 
             this.cmbEncryption.Dock = System.Windows.Forms.DockStyle.Top;
             this.cmbEncryption.FormattingEnabled = true;
-            this.cmbEncryption.Location = new System.Drawing.Point(219, 138);
+            this.cmbEncryption.Location = new System.Drawing.Point(102, 87);
             this.cmbEncryption.Margin = new System.Windows.Forms.Padding(3, 3, 3, 8);
             this.cmbEncryption.Name = "cmbEncryption";
-            this.cmbEncryption.Size = new System.Drawing.Size(419, 39);
+            this.cmbEncryption.Size = new System.Drawing.Size(536, 20);
             this.cmbEncryption.TabIndex = 13;
             // 
             // txtLink
             // 
             this.txtLink.Dock = System.Windows.Forms.DockStyle.Top;
-            this.txtLink.Location = new System.Drawing.Point(219, 464);
+            this.txtLink.Location = new System.Drawing.Point(102, 288);
             this.txtLink.Name = "txtLink";
             this.txtLink.ReadOnly = true;
-            this.txtLink.Size = new System.Drawing.Size(419, 38);
+            this.txtLink.Size = new System.Drawing.Size(536, 21);
             this.txtLink.TabIndex = 27;
             this.txtLink.WordWrap = false;
             this.txtLink.Enter += new System.EventHandler(this.TextBox_Enter);
@@ -366,10 +356,10 @@
             // txtRemarks
             // 
             this.txtRemarks.Dock = System.Windows.Forms.DockStyle.Top;
-            this.txtRemarks.Location = new System.Drawing.Point(219, 376);
+            this.txtRemarks.Location = new System.Drawing.Point(102, 234);
             this.txtRemarks.MaxLength = 256;
             this.txtRemarks.Name = "txtRemarks";
-            this.txtRemarks.Size = new System.Drawing.Size(419, 38);
+            this.txtRemarks.Size = new System.Drawing.Size(536, 21);
             this.txtRemarks.TabIndex = 23;
             this.txtRemarks.WordWrap = false;
             // 
@@ -377,10 +367,10 @@
             // 
             this.lblObfsUdp.AutoSize = true;
             this.lblObfsUdp.Dock = System.Windows.Forms.DockStyle.Top;
-            this.lblObfsUdp.Location = new System.Drawing.Point(6, 674);
+            this.lblObfsUdp.Location = new System.Drawing.Point(6, 404);
             this.lblObfsUdp.Margin = new System.Windows.Forms.Padding(3);
             this.lblObfsUdp.Name = "lblObfsUdp";
-            this.lblObfsUdp.Size = new System.Drawing.Size(207, 32);
+            this.lblObfsUdp.Size = new System.Drawing.Size(90, 12);
             this.lblObfsUdp.TabIndex = 36;
             this.lblObfsUdp.Text = "Obfs UDP";
             this.lblObfsUdp.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
@@ -390,9 +380,9 @@
             // 
             this.chkObfsUDP.AutoSize = true;
             this.chkObfsUDP.Dock = System.Windows.Forms.DockStyle.Top;
-            this.chkObfsUDP.Location = new System.Drawing.Point(219, 674);
+            this.chkObfsUDP.Location = new System.Drawing.Point(102, 404);
             this.chkObfsUDP.Name = "chkObfsUDP";
-            this.chkObfsUDP.Size = new System.Drawing.Size(419, 36);
+            this.chkObfsUDP.Size = new System.Drawing.Size(536, 16);
             this.chkObfsUDP.TabIndex = 37;
             this.chkObfsUDP.Text = "Recommend checked";
             this.chkObfsUDP.UseVisualStyleBackColor = true;
@@ -402,11 +392,11 @@
             // 
             this.lblTCPProtocol.AutoSize = true;
             this.lblTCPProtocol.Dock = System.Windows.Forms.DockStyle.Top;
-            this.lblTCPProtocol.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(128)))), ((int)(((byte)(0)))), ((int)(((byte)(192)))));
-            this.lblTCPProtocol.Location = new System.Drawing.Point(6, 188);
+            this.lblTCPProtocol.ForeColor = System.Drawing.Color.FromArgb(((int) (((byte) (128)))), ((int) (((byte) (0)))), ((int) (((byte) (192)))));
+            this.lblTCPProtocol.Location = new System.Drawing.Point(6, 118);
             this.lblTCPProtocol.Margin = new System.Windows.Forms.Padding(3);
             this.lblTCPProtocol.Name = "lblTCPProtocol";
-            this.lblTCPProtocol.Size = new System.Drawing.Size(207, 32);
+            this.lblTCPProtocol.Size = new System.Drawing.Size(90, 12);
             this.lblTCPProtocol.TabIndex = 14;
             this.lblTCPProtocol.Text = "Protocol";
             this.lblTCPProtocol.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
@@ -415,10 +405,10 @@
             // 
             this.lblUdpOverTcp.AutoSize = true;
             this.lblUdpOverTcp.Dock = System.Windows.Forms.DockStyle.Top;
-            this.lblUdpOverTcp.Location = new System.Drawing.Point(6, 632);
+            this.lblUdpOverTcp.Location = new System.Drawing.Point(6, 382);
             this.lblUdpOverTcp.Margin = new System.Windows.Forms.Padding(3);
             this.lblUdpOverTcp.Name = "lblUdpOverTcp";
-            this.lblUdpOverTcp.Size = new System.Drawing.Size(207, 32);
+            this.lblUdpOverTcp.Size = new System.Drawing.Size(90, 12);
             this.lblUdpOverTcp.TabIndex = 34;
             this.lblUdpOverTcp.Text = "UDP over TCP";
             this.lblUdpOverTcp.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
@@ -428,9 +418,9 @@
             // 
             this.chkUdpOverTcp.AutoSize = true;
             this.chkUdpOverTcp.Dock = System.Windows.Forms.DockStyle.Top;
-            this.chkUdpOverTcp.Location = new System.Drawing.Point(219, 632);
+            this.chkUdpOverTcp.Location = new System.Drawing.Point(102, 382);
             this.chkUdpOverTcp.Name = "chkUdpOverTcp";
-            this.chkUdpOverTcp.Size = new System.Drawing.Size(419, 36);
+            this.chkUdpOverTcp.Size = new System.Drawing.Size(536, 16);
             this.chkUdpOverTcp.TabIndex = 35;
             this.chkUdpOverTcp.Text = "UDP over TCP if not checked";
             this.chkUdpOverTcp.UseVisualStyleBackColor = true;
@@ -440,10 +430,10 @@
             // 
             this.LabelNote.AutoSize = true;
             this.LabelNote.Dock = System.Windows.Forms.DockStyle.Top;
-            this.LabelNote.Location = new System.Drawing.Point(216, 508);
+            this.LabelNote.Location = new System.Drawing.Point(99, 315);
             this.LabelNote.Margin = new System.Windows.Forms.Padding(0, 3, 3, 3);
             this.LabelNote.Name = "LabelNote";
-            this.LabelNote.Size = new System.Drawing.Size(422, 32);
+            this.LabelNote.Size = new System.Drawing.Size(539, 12);
             this.LabelNote.TabIndex = 29;
             this.LabelNote.Text = "NOT all server support belows";
             // 
@@ -451,10 +441,10 @@
             // 
             this.chkPassword.AutoSize = true;
             this.chkPassword.Dock = System.Windows.Forms.DockStyle.Top;
-            this.chkPassword.Location = new System.Drawing.Point(3, 91);
+            this.chkPassword.Location = new System.Drawing.Point(3, 57);
             this.chkPassword.Margin = new System.Windows.Forms.Padding(0);
             this.chkPassword.Name = "chkPassword";
-            this.chkPassword.Size = new System.Drawing.Size(213, 36);
+            this.chkPassword.Size = new System.Drawing.Size(96, 16);
             this.chkPassword.TabIndex = 10;
             this.chkPassword.Text = "Password";
             this.chkPassword.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
@@ -465,10 +455,10 @@
             // 
             this.lblTcpOverUdp.AutoSize = true;
             this.lblTcpOverUdp.Dock = System.Windows.Forms.DockStyle.Top;
-            this.lblTcpOverUdp.Location = new System.Drawing.Point(6, 590);
+            this.lblTcpOverUdp.Location = new System.Drawing.Point(6, 360);
             this.lblTcpOverUdp.Margin = new System.Windows.Forms.Padding(3);
             this.lblTcpOverUdp.Name = "lblTcpOverUdp";
-            this.lblTcpOverUdp.Size = new System.Drawing.Size(207, 32);
+            this.lblTcpOverUdp.Size = new System.Drawing.Size(90, 12);
             this.lblTcpOverUdp.TabIndex = 32;
             this.lblTcpOverUdp.Text = "TCP over UDP";
             this.lblTcpOverUdp.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
@@ -478,9 +468,9 @@
             // 
             this.chkTcpOverUdp.AutoSize = true;
             this.chkTcpOverUdp.Dock = System.Windows.Forms.DockStyle.Top;
-            this.chkTcpOverUdp.Location = new System.Drawing.Point(219, 590);
+            this.chkTcpOverUdp.Location = new System.Drawing.Point(102, 360);
             this.chkTcpOverUdp.Name = "chkTcpOverUdp";
-            this.chkTcpOverUdp.Size = new System.Drawing.Size(419, 36);
+            this.chkTcpOverUdp.Size = new System.Drawing.Size(536, 16);
             this.chkTcpOverUdp.TabIndex = 33;
             this.chkTcpOverUdp.Text = "TCP over UDP if not checked";
             this.chkTcpOverUdp.UseVisualStyleBackColor = true;
@@ -490,35 +480,22 @@
             // 
             this.cmbTcpProtocol.Dock = System.Windows.Forms.DockStyle.Top;
             this.cmbTcpProtocol.FormattingEnabled = true;
-            this.cmbTcpProtocol.Items.AddRange(new object[] {
-            "origin",
-            "verify_deflate",
-            "auth_sha1_v4",
-            "auth_aes128_md5",
-            "auth_aes128_sha1",
-            "auth_chain_a",
-            "auth_chain_b",
-            "auth_chain_c",
-            "auth_chain_d",
-            "auth_chain_e",
-            "auth_chain_f",
-            "auth_akarin_rand",
-            "auth_akarin_spec_a"});
-            this.cmbTcpProtocol.Location = new System.Drawing.Point(219, 188);
+            this.cmbTcpProtocol.Items.AddRange(new object[] {"origin", "verify_deflate", "auth_sha1_v4", "auth_aes128_md5", "auth_aes128_sha1", "auth_chain_a", "auth_chain_b", "auth_chain_c", "auth_chain_d", "auth_chain_e", "auth_chain_f", "auth_akarin_rand", "auth_akarin_spec_a"});
+            this.cmbTcpProtocol.Location = new System.Drawing.Point(102, 118);
             this.cmbTcpProtocol.Margin = new System.Windows.Forms.Padding(3, 3, 3, 8);
             this.cmbTcpProtocol.Name = "cmbTcpProtocol";
-            this.cmbTcpProtocol.Size = new System.Drawing.Size(419, 39);
+            this.cmbTcpProtocol.Size = new System.Drawing.Size(536, 20);
             this.cmbTcpProtocol.TabIndex = 15;
             // 
             // lblObfsParam
             // 
             this.lblObfsParam.AutoSize = true;
             this.lblObfsParam.Dock = System.Windows.Forms.DockStyle.Top;
-            this.lblObfsParam.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(128)))), ((int)(((byte)(0)))), ((int)(((byte)(192)))));
-            this.lblObfsParam.Location = new System.Drawing.Point(6, 332);
+            this.lblObfsParam.ForeColor = System.Drawing.Color.FromArgb(((int) (((byte) (128)))), ((int) (((byte) (0)))), ((int) (((byte) (192)))));
+            this.lblObfsParam.Location = new System.Drawing.Point(6, 207);
             this.lblObfsParam.Margin = new System.Windows.Forms.Padding(3);
             this.lblObfsParam.Name = "lblObfsParam";
-            this.lblObfsParam.Size = new System.Drawing.Size(207, 32);
+            this.lblObfsParam.Size = new System.Drawing.Size(90, 12);
             this.lblObfsParam.TabIndex = 20;
             this.lblObfsParam.Text = "Obfs param";
             this.lblObfsParam.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
@@ -526,19 +503,19 @@
             // txtObfsParam
             // 
             this.txtObfsParam.Dock = System.Windows.Forms.DockStyle.Top;
-            this.txtObfsParam.Location = new System.Drawing.Point(219, 332);
+            this.txtObfsParam.Location = new System.Drawing.Point(102, 207);
             this.txtObfsParam.Name = "txtObfsParam";
-            this.txtObfsParam.Size = new System.Drawing.Size(419, 38);
+            this.txtObfsParam.Size = new System.Drawing.Size(536, 21);
             this.txtObfsParam.TabIndex = 21;
             // 
             // lblGroup
             // 
             this.lblGroup.AutoSize = true;
             this.lblGroup.Dock = System.Windows.Forms.DockStyle.Top;
-            this.lblGroup.Location = new System.Drawing.Point(6, 420);
+            this.lblGroup.Location = new System.Drawing.Point(6, 261);
             this.lblGroup.Margin = new System.Windows.Forms.Padding(3);
             this.lblGroup.Name = "lblGroup";
-            this.lblGroup.Size = new System.Drawing.Size(207, 32);
+            this.lblGroup.Size = new System.Drawing.Size(90, 12);
             this.lblGroup.TabIndex = 24;
             this.lblGroup.Text = "Group";
             this.lblGroup.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
@@ -546,10 +523,10 @@
             // txtGroup
             // 
             this.txtGroup.Dock = System.Windows.Forms.DockStyle.Top;
-            this.txtGroup.Location = new System.Drawing.Point(219, 420);
+            this.txtGroup.Location = new System.Drawing.Point(102, 261);
             this.txtGroup.MaxLength = 64;
             this.txtGroup.Name = "txtGroup";
-            this.txtGroup.Size = new System.Drawing.Size(419, 38);
+            this.txtGroup.Size = new System.Drawing.Size(536, 21);
             this.txtGroup.TabIndex = 25;
             this.txtGroup.WordWrap = false;
             // 
@@ -557,10 +534,10 @@
             // 
             this.chkAdvSetting.AutoSize = true;
             this.chkAdvSetting.Dock = System.Windows.Forms.DockStyle.Top;
-            this.chkAdvSetting.Location = new System.Drawing.Point(3, 505);
+            this.chkAdvSetting.Location = new System.Drawing.Point(3, 312);
             this.chkAdvSetting.Margin = new System.Windows.Forms.Padding(0);
             this.chkAdvSetting.Name = "chkAdvSetting";
-            this.chkAdvSetting.Size = new System.Drawing.Size(213, 36);
+            this.chkAdvSetting.Size = new System.Drawing.Size(96, 16);
             this.chkAdvSetting.TabIndex = 28;
             this.chkAdvSetting.Text = "Adv. Setting";
             this.chkAdvSetting.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
@@ -571,10 +548,10 @@
             // 
             this.lblUDPPort.AutoSize = true;
             this.lblUDPPort.Dock = System.Windows.Forms.DockStyle.Top;
-            this.lblUDPPort.Location = new System.Drawing.Point(6, 546);
+            this.lblUDPPort.Location = new System.Drawing.Point(6, 333);
             this.lblUDPPort.Margin = new System.Windows.Forms.Padding(3);
             this.lblUDPPort.Name = "lblUDPPort";
-            this.lblUDPPort.Size = new System.Drawing.Size(207, 32);
+            this.lblUDPPort.Size = new System.Drawing.Size(90, 12);
             this.lblUDPPort.TabIndex = 30;
             this.lblUDPPort.Text = "UDP Port";
             this.lblUDPPort.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
@@ -583,14 +560,10 @@
             // nudUdpPort
             // 
             this.nudUdpPort.Dock = System.Windows.Forms.DockStyle.Top;
-            this.nudUdpPort.Location = new System.Drawing.Point(219, 546);
-            this.nudUdpPort.Maximum = new decimal(new int[] {
-            65535,
-            0,
-            0,
-            0});
+            this.nudUdpPort.Location = new System.Drawing.Point(102, 333);
+            this.nudUdpPort.Maximum = new decimal(new int[] {65535, 0, 0, 0});
             this.nudUdpPort.Name = "nudUdpPort";
-            this.nudUdpPort.Size = new System.Drawing.Size(419, 38);
+            this.nudUdpPort.Size = new System.Drawing.Size(536, 21);
             this.nudUdpPort.TabIndex = 31;
             this.nudUdpPort.Visible = false;
             // 
@@ -600,10 +573,10 @@
             this.chkSSRLink.Checked = true;
             this.chkSSRLink.CheckState = System.Windows.Forms.CheckState.Checked;
             this.chkSSRLink.Dock = System.Windows.Forms.DockStyle.Top;
-            this.chkSSRLink.Location = new System.Drawing.Point(3, 461);
+            this.chkSSRLink.Location = new System.Drawing.Point(3, 285);
             this.chkSSRLink.Margin = new System.Windows.Forms.Padding(0);
             this.chkSSRLink.Name = "chkSSRLink";
-            this.chkSSRLink.Size = new System.Drawing.Size(213, 36);
+            this.chkSSRLink.Size = new System.Drawing.Size(96, 16);
             this.chkSSRLink.TabIndex = 26;
             this.chkSSRLink.Text = "SSR Link";
             this.chkSSRLink.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
@@ -614,10 +587,10 @@
             // 
             this.lblRemarks.AutoSize = true;
             this.lblRemarks.Dock = System.Windows.Forms.DockStyle.Top;
-            this.lblRemarks.Location = new System.Drawing.Point(6, 376);
+            this.lblRemarks.Location = new System.Drawing.Point(6, 234);
             this.lblRemarks.Margin = new System.Windows.Forms.Padding(3);
             this.lblRemarks.Name = "lblRemarks";
-            this.lblRemarks.Size = new System.Drawing.Size(207, 32);
+            this.lblRemarks.Size = new System.Drawing.Size(90, 12);
             this.lblRemarks.TabIndex = 22;
             this.lblRemarks.Text = "Remarks";
             this.lblRemarks.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
@@ -626,11 +599,11 @@
             // 
             this.lblProtocolParam.AutoSize = true;
             this.lblProtocolParam.Dock = System.Windows.Forms.DockStyle.Top;
-            this.lblProtocolParam.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(128)))), ((int)(((byte)(0)))), ((int)(((byte)(192)))));
-            this.lblProtocolParam.Location = new System.Drawing.Point(6, 238);
+            this.lblProtocolParam.ForeColor = System.Drawing.Color.FromArgb(((int) (((byte) (128)))), ((int) (((byte) (0)))), ((int) (((byte) (192)))));
+            this.lblProtocolParam.Location = new System.Drawing.Point(6, 149);
             this.lblProtocolParam.Margin = new System.Windows.Forms.Padding(3);
             this.lblProtocolParam.Name = "lblProtocolParam";
-            this.lblProtocolParam.Size = new System.Drawing.Size(207, 32);
+            this.lblProtocolParam.Size = new System.Drawing.Size(90, 12);
             this.lblProtocolParam.TabIndex = 16;
             this.lblProtocolParam.Text = "Protocol param";
             this.lblProtocolParam.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
@@ -638,9 +611,9 @@
             // txtProtocolParam
             // 
             this.txtProtocolParam.Dock = System.Windows.Forms.DockStyle.Top;
-            this.txtProtocolParam.Location = new System.Drawing.Point(219, 238);
+            this.txtProtocolParam.Location = new System.Drawing.Point(102, 149);
             this.txtProtocolParam.Name = "txtProtocolParam";
-            this.txtProtocolParam.Size = new System.Drawing.Size(419, 38);
+            this.txtProtocolParam.Size = new System.Drawing.Size(536, 21);
             this.txtProtocolParam.TabIndex = 17;
             // 
             // chkIP
@@ -650,7 +623,7 @@
             this.chkIP.Location = new System.Drawing.Point(3, 3);
             this.chkIP.Margin = new System.Windows.Forms.Padding(0);
             this.chkIP.Name = "chkIP";
-            this.chkIP.Size = new System.Drawing.Size(213, 36);
+            this.chkIP.Size = new System.Drawing.Size(96, 16);
             this.chkIP.TabIndex = 38;
             this.chkIP.Text = "Server IP";
             this.chkIP.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
@@ -673,7 +646,7 @@
             this.tableLayoutPanel7.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableLayoutPanel7.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableLayoutPanel7.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.tableLayoutPanel7.Size = new System.Drawing.Size(302, 798);
+            this.tableLayoutPanel7.Size = new System.Drawing.Size(302, 491);
             this.tableLayoutPanel7.TabIndex = 16;
             // 
             // llbUpdate
@@ -682,7 +655,7 @@
             this.llbUpdate.Location = new System.Drawing.Point(5, 397);
             this.llbUpdate.Margin = new System.Windows.Forms.Padding(5);
             this.llbUpdate.Name = "llbUpdate";
-            this.llbUpdate.Size = new System.Drawing.Size(292, 32);
+            this.llbUpdate.Size = new System.Drawing.Size(131, 12);
             this.llbUpdate.TabIndex = 5;
             this.llbUpdate.TabStop = true;
             this.llbUpdate.Text = "New version available";
@@ -748,12 +721,12 @@
             this.tableLayoutPanel5.RowCount = 2;
             this.tableLayoutPanel5.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.tableLayoutPanel5.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.tableLayoutPanel5.Size = new System.Drawing.Size(268, 747);
+            this.tableLayoutPanel5.Size = new System.Drawing.Size(268, 440);
             this.tableLayoutPanel5.TabIndex = 17;
             // 
             // tableLayoutPanel3
             // 
-            this.tableLayoutPanel3.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
+            this.tableLayoutPanel3.Anchor = ((System.Windows.Forms.AnchorStyles) ((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
             this.tableLayoutPanel3.AutoSize = true;
             this.tableLayoutPanel3.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.tableLayoutPanel3.ColumnCount = 2;
@@ -761,7 +734,7 @@
             this.tableLayoutPanel3.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.tableLayoutPanel3.Controls.Add(this.btnCancel, 1, 0);
             this.tableLayoutPanel3.Controls.Add(this.btnOK, 0, 0);
-            this.tableLayoutPanel3.Location = new System.Drawing.Point(320, 756);
+            this.tableLayoutPanel3.Location = new System.Drawing.Point(320, 449);
             this.tableLayoutPanel3.Margin = new System.Windows.Forms.Padding(12, 3, 0, 3);
             this.tableLayoutPanel3.Name = "tableLayoutPanel3";
             this.tableLayoutPanel3.RowCount = 1;
@@ -816,15 +789,15 @@
             this.Text = "Edit Servers";
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.ConfigForm_FormClosed);
             this.Shown += new System.EventHandler(this.ConfigForm_Shown);
-            ((System.ComponentModel.ISupportInitialize)(this.picQRcode)).EndInit();
+            ((System.ComponentModel.ISupportInitialize) (this.picQRcode)).EndInit();
             this.tableLayoutPanel2.ResumeLayout(false);
             this.tableLayoutPanel2.PerformLayout();
             this.ServerGroupBox.ResumeLayout(false);
             this.ServerGroupBox.PerformLayout();
             this.tableLayoutPanel1.ResumeLayout(false);
             this.tableLayoutPanel1.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.nudServerPort)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.nudUdpPort)).EndInit();
+            ((System.ComponentModel.ISupportInitialize) (this.nudServerPort)).EndInit();
+            ((System.ComponentModel.ISupportInitialize) (this.nudUdpPort)).EndInit();
             this.tableLayoutPanel7.ResumeLayout(false);
             this.tableLayoutPanel7.PerformLayout();
             this.tableLayoutPanel4.ResumeLayout(false);
@@ -835,59 +808,59 @@
             this.tableLayoutPanel3.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
-
         }
 
-        #endregion
-        private System.Windows.Forms.Panel panel2;
-        private System.Windows.Forms.Button btnDelete;
         private System.Windows.Forms.Button btnAdd;
-        private System.Windows.Forms.ListBox lstServers;
-        private System.Windows.Forms.TableLayoutPanel tableLayoutPanel2;
-        private System.Windows.Forms.TableLayoutPanel tableLayoutPanel4;
+        private System.Windows.Forms.Button btnCancel;
+        private System.Windows.Forms.Button btnDelete;
         private System.Windows.Forms.Button btnDown;
+        private System.Windows.Forms.Button btnOK;
         private System.Windows.Forms.Button btnUp;
-        private System.Windows.Forms.PictureBox picQRcode;
-        private System.Windows.Forms.LinkLabel llbUpdate;
-        private System.Windows.Forms.TableLayoutPanel tableLayoutPanel7;
-        private System.Windows.Forms.TableLayoutPanel tableLayoutPanel5;
-        private System.Windows.Forms.GroupBox ServerGroupBox;
-        private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
-        private System.Windows.Forms.ComboBox cmbObfs;
-        private System.Windows.Forms.Label lblObfs;
-        private System.Windows.Forms.Label lblServerPort;
-        private System.Windows.Forms.TextBox txtIP;
-        private System.Windows.Forms.NumericUpDown nudServerPort;
-        private System.Windows.Forms.TextBox txtPassword;
-        private System.Windows.Forms.Label lblEncryption;
-        private System.Windows.Forms.ComboBox cmbEncryption;
-        private System.Windows.Forms.TextBox txtLink;
-        private System.Windows.Forms.TextBox txtRemarks;
-        private System.Windows.Forms.Label lblObfsUdp;
+        private System.Windows.Forms.CheckBox chkAdvSetting;
+        private System.Windows.Forms.CheckBox chkIP;
         private System.Windows.Forms.CheckBox chkObfsUDP;
+        private System.Windows.Forms.CheckBox chkPassword;
+        private System.Windows.Forms.CheckBox chkSSRLink;
+        private System.Windows.Forms.CheckBox chkTcpOverUdp;
+        private System.Windows.Forms.CheckBox chkUdpOverTcp;
+        private System.Windows.Forms.ComboBox cmbEncryption;
+        private System.Windows.Forms.ComboBox cmbObfs;
+        private System.Windows.Forms.ComboBox cmbTcpProtocol;
+        private System.Windows.Forms.Label LabelNote;
+        private System.Windows.Forms.Label lblEncryption;
+        private System.Windows.Forms.Label lblGroup;
+        private System.Windows.Forms.Label lblObfs;
+        private System.Windows.Forms.Label lblObfsParam;
+        private System.Windows.Forms.Label lblObfsUdp;
+        private System.Windows.Forms.Label lblProtocolParam;
+        private System.Windows.Forms.Label lblRemarks;
+        private System.Windows.Forms.Label lblServerPort;
+        private System.Windows.Forms.Label lblTcpOverUdp;
         private System.Windows.Forms.Label lblTCPProtocol;
         private System.Windows.Forms.Label lblUdpOverTcp;
-        private System.Windows.Forms.CheckBox chkUdpOverTcp;
-        private System.Windows.Forms.Label LabelNote;
-        private System.Windows.Forms.CheckBox chkPassword;
-        private System.Windows.Forms.Label lblTcpOverUdp;
-        private System.Windows.Forms.CheckBox chkTcpOverUdp;
-        private System.Windows.Forms.ComboBox cmbTcpProtocol;
-        private System.Windows.Forms.Label lblObfsParam;
-        private System.Windows.Forms.TextBox txtObfsParam;
-        private System.Windows.Forms.Label lblGroup;
-        private System.Windows.Forms.TextBox txtGroup;
-        private System.Windows.Forms.CheckBox chkAdvSetting;
         private System.Windows.Forms.Label lblUDPPort;
+        private System.Windows.Forms.LinkLabel llbUpdate;
+        private System.Windows.Forms.ListBox lstServers;
+        private System.Windows.Forms.NumericUpDown nudServerPort;
         private System.Windows.Forms.NumericUpDown nudUdpPort;
-        private System.Windows.Forms.CheckBox chkSSRLink;
-        private System.Windows.Forms.Label lblRemarks;
+        private System.Windows.Forms.Panel panel2;
+        private System.Windows.Forms.PictureBox picQRcode;
+        private System.Windows.Forms.GroupBox ServerGroupBox;
+        private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
+        private System.Windows.Forms.TableLayoutPanel tableLayoutPanel2;
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel3;
-        private System.Windows.Forms.Button btnCancel;
-        private System.Windows.Forms.Button btnOK;
-        private System.Windows.Forms.Label lblProtocolParam;
+        private System.Windows.Forms.TableLayoutPanel tableLayoutPanel4;
+        private System.Windows.Forms.TableLayoutPanel tableLayoutPanel5;
+        private System.Windows.Forms.TableLayoutPanel tableLayoutPanel7;
+        private System.Windows.Forms.TextBox txtGroup;
+        private System.Windows.Forms.TextBox txtIP;
+        private System.Windows.Forms.TextBox txtLink;
+        private System.Windows.Forms.TextBox txtObfsParam;
+        private System.Windows.Forms.TextBox txtPassword;
         private System.Windows.Forms.TextBox txtProtocolParam;
-        private System.Windows.Forms.CheckBox chkIP;
+        private System.Windows.Forms.TextBox txtRemarks;
+
+        #endregion
     }
 }
 

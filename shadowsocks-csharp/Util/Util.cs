@@ -28,7 +28,6 @@ namespace Shadowsocks.Util
 
         public static void ReleaseMemory()
         {
-#if !_CONSOLE
             // release any unused pages
             // making the numbers look good in task manager
             // this is totally nonsense in programming
@@ -46,7 +45,6 @@ namespace Shadowsocks.Util
                 SetProcessWorkingSetSize(current_process.Handle,
                     (UIntPtr) 0xFFFFFFFFFFFFFFFF,
                     (UIntPtr) 0xFFFFFFFFFFFFFFFF);
-#endif
         }
 
         public static string UnGzip(byte[] buf)

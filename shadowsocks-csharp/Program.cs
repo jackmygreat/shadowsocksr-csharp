@@ -49,10 +49,11 @@ namespace Shadowsocks
                         I18N.GetString("ShadowsocksR is already running."));
                     return;
                 }
+
                 Directory.SetCurrentDirectory(Application.StartupPath);
 
                 var try_times = 0;
-                while (Configuration.Load() == null)
+                while (Configuration.Load() == null) //gui-config.json
                 {
                     if (try_times >= 5)
                         return;
@@ -74,7 +75,7 @@ namespace Shadowsocks
                 HostMap.Instance().LoadHostFile();
 
                 // Logging
-                var cfg = _controller.GetConfiguration();
+                Configuration cfg = _controller.GetConfiguration();
                 Logging.save_to_file = cfg.logEnable;
 
                 //#if !DEBUG
@@ -84,6 +85,8 @@ namespace Shadowsocks
                 // Enable Modern TLS when .NET 4.5+ installed.
                 if (EnvCheck.CheckDotNet45())
                     ServicePointManager.SecurityProtocol = (SecurityProtocolType) 3072;
+                
+                
                 _viewController = new MenuViewController(_controller);
 
                 _controller.Start();
@@ -92,6 +95,7 @@ namespace Shadowsocks
 
                 Application.Run();
             }
+
             Console.ReadLine();
             _controller.Stop();
         }

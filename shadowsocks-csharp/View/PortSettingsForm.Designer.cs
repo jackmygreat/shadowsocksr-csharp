@@ -54,8 +54,8 @@
             this.tableLayoutPanel1.SuspendLayout();
             this.groupBox1.SuspendLayout();
             this.tableLayoutPanel2.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.NumTargetPort)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.NumLocalPort)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize) (this.NumTargetPort)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize) (this.NumLocalPort)).BeginInit();
             this.tableLayoutPanel3.SuspendLayout();
             this.tableLayoutPanel4.SuspendLayout();
             this.SuspendLayout();
@@ -82,7 +82,7 @@
             // 
             this.listPorts.Dock = System.Windows.Forms.DockStyle.Fill;
             this.listPorts.FormattingEnabled = true;
-            this.listPorts.ItemHeight = 31;
+            this.listPorts.ItemHeight = 12;
             this.listPorts.Location = new System.Drawing.Point(3, 3);
             this.listPorts.Name = "listPorts";
             this.listPorts.Size = new System.Drawing.Size(144, 345);
@@ -122,7 +122,7 @@
             this.tableLayoutPanel2.Controls.Add(this.label1, 0, 6);
             this.tableLayoutPanel2.Controls.Add(this.textRemarks, 1, 6);
             this.tableLayoutPanel2.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tableLayoutPanel2.Location = new System.Drawing.Point(3, 34);
+            this.tableLayoutPanel2.Location = new System.Drawing.Point(3, 17);
             this.tableLayoutPanel2.Name = "tableLayoutPanel2";
             this.tableLayoutPanel2.RowCount = 8;
             this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle());
@@ -133,16 +133,16 @@
             this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.tableLayoutPanel2.Size = new System.Drawing.Size(579, 308);
+            this.tableLayoutPanel2.Size = new System.Drawing.Size(579, 325);
             this.tableLayoutPanel2.TabIndex = 0;
             // 
             // labelType
             // 
             this.labelType.AutoSize = true;
             this.labelType.Dock = System.Windows.Forms.DockStyle.Top;
-            this.labelType.Location = new System.Drawing.Point(3, 42);
+            this.labelType.Location = new System.Drawing.Point(3, 22);
             this.labelType.Name = "labelType";
-            this.labelType.Size = new System.Drawing.Size(164, 32);
+            this.labelType.Size = new System.Drawing.Size(71, 12);
             this.labelType.TabIndex = 0;
             this.labelType.Text = "Type";
             this.labelType.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
@@ -151,9 +151,9 @@
             // 
             this.labelID.AutoSize = true;
             this.labelID.Dock = System.Windows.Forms.DockStyle.Top;
-            this.labelID.Location = new System.Drawing.Point(3, 87);
+            this.labelID.Location = new System.Drawing.Point(3, 48);
             this.labelID.Name = "labelID";
-            this.labelID.Size = new System.Drawing.Size(164, 32);
+            this.labelID.Size = new System.Drawing.Size(71, 12);
             this.labelID.TabIndex = 0;
             this.labelID.Text = "Server ID";
             this.labelID.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
@@ -162,9 +162,9 @@
             // 
             this.labelAddr.AutoSize = true;
             this.labelAddr.Dock = System.Windows.Forms.DockStyle.Top;
-            this.labelAddr.Location = new System.Drawing.Point(3, 176);
+            this.labelAddr.Location = new System.Drawing.Point(3, 101);
             this.labelAddr.Name = "labelAddr";
-            this.labelAddr.Size = new System.Drawing.Size(164, 32);
+            this.labelAddr.Size = new System.Drawing.Size(71, 12);
             this.labelAddr.TabIndex = 0;
             this.labelAddr.Text = "Target Addr";
             this.labelAddr.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
@@ -173,9 +173,9 @@
             // 
             this.labelPort.AutoSize = true;
             this.labelPort.Dock = System.Windows.Forms.DockStyle.Top;
-            this.labelPort.Location = new System.Drawing.Point(3, 220);
+            this.labelPort.Location = new System.Drawing.Point(3, 128);
             this.labelPort.Name = "labelPort";
-            this.labelPort.Size = new System.Drawing.Size(164, 32);
+            this.labelPort.Size = new System.Drawing.Size(71, 12);
             this.labelPort.TabIndex = 0;
             this.labelPort.Text = "Target Port";
             this.labelPort.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
@@ -184,9 +184,9 @@
             // 
             this.checkEnable.AutoSize = true;
             this.checkEnable.Dock = System.Windows.Forms.DockStyle.Top;
-            this.checkEnable.Location = new System.Drawing.Point(173, 3);
+            this.checkEnable.Location = new System.Drawing.Point(80, 3);
             this.checkEnable.Name = "checkEnable";
-            this.checkEnable.Size = new System.Drawing.Size(403, 36);
+            this.checkEnable.Size = new System.Drawing.Size(403, 16);
             this.checkEnable.TabIndex = 3;
             this.checkEnable.Text = "Enable";
             this.checkEnable.UseVisualStyleBackColor = true;
@@ -194,22 +194,18 @@
             // textAddr
             // 
             this.textAddr.Dock = System.Windows.Forms.DockStyle.Top;
-            this.textAddr.Location = new System.Drawing.Point(173, 179);
+            this.textAddr.Location = new System.Drawing.Point(80, 104);
             this.textAddr.Name = "textAddr";
-            this.textAddr.Size = new System.Drawing.Size(403, 38);
+            this.textAddr.Size = new System.Drawing.Size(403, 21);
             this.textAddr.TabIndex = 7;
             // 
             // NumTargetPort
             // 
             this.NumTargetPort.Dock = System.Windows.Forms.DockStyle.Top;
-            this.NumTargetPort.Location = new System.Drawing.Point(173, 223);
-            this.NumTargetPort.Maximum = new decimal(new int[] {
-            65535,
-            0,
-            0,
-            0});
+            this.NumTargetPort.Location = new System.Drawing.Point(80, 131);
+            this.NumTargetPort.Maximum = new decimal(new int[] {65535, 0, 0, 0});
             this.NumTargetPort.Name = "NumTargetPort";
-            this.NumTargetPort.Size = new System.Drawing.Size(403, 38);
+            this.NumTargetPort.Size = new System.Drawing.Size(403, 21);
             this.NumTargetPort.TabIndex = 8;
             // 
             // comboBoxType
@@ -217,13 +213,10 @@
             this.comboBoxType.Dock = System.Windows.Forms.DockStyle.Top;
             this.comboBoxType.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.comboBoxType.FormattingEnabled = true;
-            this.comboBoxType.Items.AddRange(new object[] {
-            "Port Forward",
-            "Force Proxy",
-            "Proxy With Rule"});
-            this.comboBoxType.Location = new System.Drawing.Point(173, 45);
+            this.comboBoxType.Items.AddRange(new object[] {"Port Forward", "Force Proxy", "Proxy With Rule"});
+            this.comboBoxType.Location = new System.Drawing.Point(80, 25);
             this.comboBoxType.Name = "comboBoxType";
-            this.comboBoxType.Size = new System.Drawing.Size(403, 39);
+            this.comboBoxType.Size = new System.Drawing.Size(403, 20);
             this.comboBoxType.TabIndex = 4;
             this.comboBoxType.SelectedIndexChanged += new System.EventHandler(this.comboBoxType_SelectedIndexChanged);
             // 
@@ -232,18 +225,18 @@
             this.comboServers.Dock = System.Windows.Forms.DockStyle.Top;
             this.comboServers.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.comboServers.FormattingEnabled = true;
-            this.comboServers.Location = new System.Drawing.Point(173, 90);
+            this.comboServers.Location = new System.Drawing.Point(80, 51);
             this.comboServers.Name = "comboServers";
-            this.comboServers.Size = new System.Drawing.Size(403, 39);
+            this.comboServers.Size = new System.Drawing.Size(403, 20);
             this.comboServers.TabIndex = 5;
             // 
             // labelLocal
             // 
             this.labelLocal.AutoSize = true;
             this.labelLocal.Dock = System.Windows.Forms.DockStyle.Top;
-            this.labelLocal.Location = new System.Drawing.Point(3, 132);
+            this.labelLocal.Location = new System.Drawing.Point(3, 74);
             this.labelLocal.Name = "labelLocal";
-            this.labelLocal.Size = new System.Drawing.Size(164, 32);
+            this.labelLocal.Size = new System.Drawing.Size(71, 12);
             this.labelLocal.TabIndex = 0;
             this.labelLocal.Text = "Local Port";
             this.labelLocal.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
@@ -251,23 +244,19 @@
             // NumLocalPort
             // 
             this.NumLocalPort.Dock = System.Windows.Forms.DockStyle.Top;
-            this.NumLocalPort.Location = new System.Drawing.Point(173, 135);
-            this.NumLocalPort.Maximum = new decimal(new int[] {
-            65535,
-            0,
-            0,
-            0});
+            this.NumLocalPort.Location = new System.Drawing.Point(80, 77);
+            this.NumLocalPort.Maximum = new decimal(new int[] {65535, 0, 0, 0});
             this.NumLocalPort.Name = "NumLocalPort";
-            this.NumLocalPort.Size = new System.Drawing.Size(403, 38);
+            this.NumLocalPort.Size = new System.Drawing.Size(403, 21);
             this.NumLocalPort.TabIndex = 6;
             // 
             // label1
             // 
             this.label1.AutoSize = true;
             this.label1.Dock = System.Windows.Forms.DockStyle.Top;
-            this.label1.Location = new System.Drawing.Point(3, 264);
+            this.label1.Location = new System.Drawing.Point(3, 155);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(164, 32);
+            this.label1.Size = new System.Drawing.Size(71, 12);
             this.label1.TabIndex = 0;
             this.label1.Text = "Remarks";
             this.label1.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
@@ -275,9 +264,9 @@
             // textRemarks
             // 
             this.textRemarks.Dock = System.Windows.Forms.DockStyle.Top;
-            this.textRemarks.Location = new System.Drawing.Point(173, 267);
+            this.textRemarks.Location = new System.Drawing.Point(80, 158);
             this.textRemarks.Name = "textRemarks";
-            this.textRemarks.Size = new System.Drawing.Size(403, 38);
+            this.textRemarks.Size = new System.Drawing.Size(403, 21);
             this.textRemarks.TabIndex = 9;
             // 
             // tableLayoutPanel3
@@ -378,41 +367,40 @@
             this.groupBox1.PerformLayout();
             this.tableLayoutPanel2.ResumeLayout(false);
             this.tableLayoutPanel2.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.NumTargetPort)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.NumLocalPort)).EndInit();
+            ((System.ComponentModel.ISupportInitialize) (this.NumTargetPort)).EndInit();
+            ((System.ComponentModel.ISupportInitialize) (this.NumLocalPort)).EndInit();
             this.tableLayoutPanel3.ResumeLayout(false);
             this.tableLayoutPanel3.PerformLayout();
             this.tableLayoutPanel4.ResumeLayout(false);
             this.tableLayoutPanel4.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
-
         }
 
-        #endregion
-
-        private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
-        private System.Windows.Forms.ListBox listPorts;
-        private System.Windows.Forms.Button OKButton;
-        private System.Windows.Forms.Button MyCancelButton;
-        private System.Windows.Forms.GroupBox groupBox1;
-        private System.Windows.Forms.TableLayoutPanel tableLayoutPanel2;
-        private System.Windows.Forms.Label labelType;
-        private System.Windows.Forms.Label labelID;
-        private System.Windows.Forms.Label labelAddr;
-        private System.Windows.Forms.Label labelPort;
+        private System.Windows.Forms.Button Add;
         private System.Windows.Forms.CheckBox checkEnable;
-        private System.Windows.Forms.TextBox textAddr;
-        private System.Windows.Forms.NumericUpDown NumTargetPort;
         private System.Windows.Forms.ComboBox comboBoxType;
         private System.Windows.Forms.ComboBox comboServers;
-        private System.Windows.Forms.TableLayoutPanel tableLayoutPanel3;
-        private System.Windows.Forms.Label labelLocal;
-        private System.Windows.Forms.NumericUpDown NumLocalPort;
-        private System.Windows.Forms.TableLayoutPanel tableLayoutPanel4;
-        private System.Windows.Forms.Button Add;
         private System.Windows.Forms.Button Del;
+        private System.Windows.Forms.GroupBox groupBox1;
         private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.Label labelAddr;
+        private System.Windows.Forms.Label labelID;
+        private System.Windows.Forms.Label labelLocal;
+        private System.Windows.Forms.Label labelPort;
+        private System.Windows.Forms.Label labelType;
+        private System.Windows.Forms.ListBox listPorts;
+        private System.Windows.Forms.Button MyCancelButton;
+        private System.Windows.Forms.NumericUpDown NumLocalPort;
+        private System.Windows.Forms.NumericUpDown NumTargetPort;
+        private System.Windows.Forms.Button OKButton;
+        private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
+        private System.Windows.Forms.TableLayoutPanel tableLayoutPanel2;
+        private System.Windows.Forms.TableLayoutPanel tableLayoutPanel3;
+        private System.Windows.Forms.TableLayoutPanel tableLayoutPanel4;
+        private System.Windows.Forms.TextBox textAddr;
         private System.Windows.Forms.TextBox textRemarks;
+
+        #endregion
     }
 }

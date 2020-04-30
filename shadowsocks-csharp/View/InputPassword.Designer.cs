@@ -69,7 +69,7 @@
             this.Controls.Add(this.label_info);
             this.Controls.Add(this.buttonOK);
             this.Controls.Add(this.textPassword);
-            this.Font = new System.Drawing.Font("Arial", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.Font = new System.Drawing.Font("Arial", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte) (0)));
             this.ImeMode = System.Windows.Forms.ImeMode.Off;
             this.KeyPreview = true;
             this.MaximizeBox = false;
@@ -81,13 +81,12 @@
             this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.InputPassword_KeyDown);
             this.ResumeLayout(false);
             this.PerformLayout();
-
         }
 
-        #endregion
-
-        private System.Windows.Forms.TextBox textPassword;
         private System.Windows.Forms.Button buttonOK;
         private System.Windows.Forms.Label label_info;
+        private System.Windows.Forms.TextBox textPassword;
+
+        #endregion
     }
 }

@@ -498,6 +498,11 @@ namespace Shadowsocks.Model
             return ret;
         }
 
+        public static Configuration Load()
+        {
+            return LoadFile(CONFIG_FILE);
+        }
+
         public static Configuration LoadFile(string filename)
         {
             try
@@ -512,9 +517,49 @@ namespace Shadowsocks.Model
             }
         }
 
-        public static Configuration Load()
+        public static Configuration Load(string config_str)
         {
-            return LoadFile(CONFIG_FILE);
+            try
+            {
+                if (GlobalConfiguration.config_password.Length > 0)
+                {
+                    var cfg_encrypt = Convert.FromBase64String(config_str);
+                    var encryptor =
+                        EncryptorFactory.GetEncryptor("aes-256-cfb", GlobalConfiguration.config_password, false);
+                    var cfg_data = new byte[cfg_encrypt.Length];
+                    var data_len = 0;
+                    const int buffer_size = 32768;
+                    var input = new byte[buffer_size];
+                    var ouput = new byte[buffer_size + 128];
+                    for (var start_pos = 0; start_pos < cfg_encrypt.Length; start_pos += buffer_size)
+                    {
+                        var len = Math.Min(cfg_encrypt.Length - start_pos, buffer_size);
+                        int out_len;
+                        Buffer.BlockCopy(cfg_encrypt, start_pos, input, 0, len);
+                        encryptor.Decrypt(input, len, ouput, out out_len);
+                        Buffer.BlockCopy(ouput, 0, cfg_data, data_len, out_len);
+                        data_len += out_len;
+                    }
+
+                    config_str = Encoding.UTF8.GetString(cfg_data, 0, data_len);
+                }
+            }
+            catch
+            {
+            }
+
+            try
+            {
+                Configuration config =
+                    SimpleJson.SimpleJson.DeserializeObject<Configuration>(config_str, new JsonSerializerStrategy());
+                config.FixConfiguration();
+                return config;
+            }
+            catch
+            {
+            }
+
+            return null;
         }
 
         public static void Save(Configuration config)
@@ -568,51 +613,6 @@ namespace Shadowsocks.Model
             {
                 Console.Error.WriteLine(e);
             }
-        }
-
-        public static Configuration Load(string config_str)
-        {
-            try
-            {
-                if (GlobalConfiguration.config_password.Length > 0)
-                {
-                    var cfg_encrypt = Convert.FromBase64String(config_str);
-                    var encryptor =
-                        EncryptorFactory.GetEncryptor("aes-256-cfb", GlobalConfiguration.config_password, false);
-                    var cfg_data = new byte[cfg_encrypt.Length];
-                    var data_len = 0;
-                    const int buffer_size = 32768;
-                    var input = new byte[buffer_size];
-                    var ouput = new byte[buffer_size + 128];
-                    for (var start_pos = 0; start_pos < cfg_encrypt.Length; start_pos += buffer_size)
-                    {
-                        var len = Math.Min(cfg_encrypt.Length - start_pos, buffer_size);
-                        int out_len;
-                        Buffer.BlockCopy(cfg_encrypt, start_pos, input, 0, len);
-                        encryptor.Decrypt(input, len, ouput, out out_len);
-                        Buffer.BlockCopy(ouput, 0, cfg_data, data_len, out_len);
-                        data_len += out_len;
-                    }
-
-                    config_str = Encoding.UTF8.GetString(cfg_data, 0, data_len);
-                }
-            }
-            catch
-            {
-            }
-
-            try
-            {
-                var config =
-                    SimpleJson.SimpleJson.DeserializeObject<Configuration>(config_str, new JsonSerializerStrategy());
-                config.FixConfiguration();
-                return config;
-            }
-            catch
-            {
-            }
-
-            return null;
         }
 
         public static Server GetDefaultServer()

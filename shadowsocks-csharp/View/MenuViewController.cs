@@ -35,6 +35,7 @@ namespace Shadowsocks.View
     {
         private readonly NotifyIcon _notifyIcon;
         private string _urlToOpen;
+        //主界面
         private ConfigForm configForm;
 
         private bool configfrom_open;
@@ -977,6 +978,7 @@ namespace Shadowsocks.View
                 else if (SCA_key == 4)
                     ShowPortMapForm();
                 else
+                //主界面
                     ShowConfigForm(false);
             }
             else if (e.Button == MouseButtons.Middle)

@@ -73,6 +73,146 @@ namespace Shadowsocks.Controller
             Reload();
         }
 
+        protected void Reload()
+        {
+            if (_port_map_listener != null)
+            {
+                foreach (var l in _port_map_listener) l.Stop();
+                _port_map_listener = null;
+            }
+
+            // some logic in configuration updated the config when saving, we need to read it again
+            _config = MergeGetConfiguration(_config);
+            _config.FlushPortMapCache();
+            ReloadIPRange();
+
+            var hostMap = new HostMap();
+            hostMap.LoadHostFile();
+            HostMap.Instance().Clear(hostMap);
+
+            if (polipoRunner == null) polipoRunner = new HttpProxyRunner();
+           
+            if (_pacServer == null)
+            {
+                _pacServer = new PACServer();
+                _pacServer.PACFileChanged += pacServer_PACFileChanged;
+            }
+
+            _pacServer.UpdateConfiguration(_config);
+            if (gfwListUpdater == null)
+            {
+                gfwListUpdater = new GFWListUpdater();
+                gfwListUpdater.UpdateCompleted += pacServer_PACUpdateCompleted;
+                gfwListUpdater.Error += pacServer_PACUpdateError;
+            }
+
+            // don't put polipoRunner.Start() before pacServer.Stop()
+            // or bind will fail when switching bind address from 0.0.0.0 to 127.0.0.1
+            // though UseShellExecute is set to true now
+            // http://stackoverflow.com/questions/10235093/socket-doesnt-close-after-application-exits-if-a-launched-process-is-open
+            var _firstRun = firstRun;
+            for (var i = 1; i <= 5; ++i)
+            {
+                _firstRun = false;
+                try
+                {
+                    if (_listener != null && !_listener.isConfigChange(_config))
+                    {
+                        var local = new Local(_config, _transfer, _rangeSet);
+                        _listener.GetServices()[0] = local;
+
+                        if (polipoRunner.HasExited())
+                        {
+                            polipoRunner.Stop();
+                            polipoRunner.Start(_config);
+
+                            _listener.GetServices()[3] = new HttpPortForwarder(polipoRunner.RunningPort, _config);
+                        }
+                    }
+                    else
+                    {
+                        if (_listener != null)
+                        {
+                            _listener.Stop();
+                            _listener = null;
+                        }
+
+                        polipoRunner.Stop();
+                        polipoRunner.Start(_config);
+
+                        var local = new Local(_config, _transfer, _rangeSet);
+                        var services = new List<Listener.Service>();
+                        services.Add(local);
+                        services.Add(_pacServer);
+                        services.Add(new APIServer(this, _config));
+                        services.Add(new HttpPortForwarder(polipoRunner.RunningPort, _config));
+                        _listener = new Listener(services);
+                        _listener.Start(_config, 0);
+                    }
+
+                    break;
+                }
+                catch (Exception e)
+                {
+                    // translate Microsoft language into human language
+                    // i.e. An attempt was made to access a socket in a way forbidden by its access permissions => Port already in use
+                    if (e is SocketException)
+                    {
+                        var se = (SocketException) e;
+                        if (se.SocketErrorCode == SocketError.AccessDenied)
+                            e = new Exception(
+                                I18N.GetString("Port already in use") + string.Format(" {0}", _config.localPort), e);
+                    }
+
+                    Logging.LogUsefulException(e);
+                    if (!_firstRun)
+                    {
+                        ReportError(e);
+                        break;
+                    }
+
+                    Thread.Sleep(1000 * i * i);
+                    if (_listener != null)
+                    {
+                        _listener.Stop();
+                        _listener = null;
+                    }
+                }
+            }
+
+            _port_map_listener = new List<Listener>();
+            foreach (var pair in _config.GetPortMapCache())
+                try
+                {
+                    var local = new Local(_config, _transfer, _rangeSet);
+                    var services = new List<Listener.Service>();
+                    services.Add(local);
+                    var listener = new Listener(services);
+                    listener.Start(_config, pair.Key);
+                    _port_map_listener.Add(listener);
+                }
+                catch (Exception e)
+                {
+                    // translate Microsoft language into human language
+                    // i.e. An attempt was made to access a socket in a way forbidden by its access permissions => Port already in use
+                    if (e is SocketException)
+                    {
+                        var se = (SocketException) e;
+                        if (se.SocketErrorCode == SocketError.AccessDenied)
+                            e = new Exception(I18N.GetString("Port already in use") + string.Format(" {0}", pair.Key),
+                                e);
+                    }
+
+                    Logging.LogUsefulException(e);
+                    ReportError(e);
+                }
+
+            ConfigChanged?.Invoke(this, new EventArgs());
+
+            UpdateSystemProxy();
+            Utils.ReleaseMemory();
+        }
+
         protected void ReportError(Exception e)
         {
             if (Errored != null) Errored(this, new ErrorEventArgs(e));
@@ -291,152 +431,6 @@ namespace Shadowsocks.Controller
             if (gfwListUpdater != null) gfwListUpdater.UpdatePACFromGFWList(_config, url);
         }
 
-        protected void Reload()
-        {
-            if (_port_map_listener != null)
-            {
-                foreach (var l in _port_map_listener) l.Stop();
-                _port_map_listener = null;
-            }
-
-            // some logic in configuration updated the config when saving, we need to read it again
-            _config = MergeGetConfiguration(_config);
-            _config.FlushPortMapCache();
-            ReloadIPRange();
-
-            var hostMap = new HostMap();
-            hostMap.LoadHostFile();
-            HostMap.Instance().Clear(hostMap);
-
-#if !_CONSOLE
-            if (polipoRunner == null) polipoRunner = new HttpProxyRunner();
-#endif
-            if (_pacServer == null)
-            {
-                _pacServer = new PACServer();
-                _pacServer.PACFileChanged += pacServer_PACFileChanged;
-            }
-
-            _pacServer.UpdateConfiguration(_config);
-            if (gfwListUpdater == null)
-            {
-                gfwListUpdater = new GFWListUpdater();
-                gfwListUpdater.UpdateCompleted += pacServer_PACUpdateCompleted;
-                gfwListUpdater.Error += pacServer_PACUpdateError;
-            }
-
-            // don't put polipoRunner.Start() before pacServer.Stop()
-            // or bind will fail when switching bind address from 0.0.0.0 to 127.0.0.1
-            // though UseShellExecute is set to true now
-            // http://stackoverflow.com/questions/10235093/socket-doesnt-close-after-application-exits-if-a-launched-process-is-open
-            var _firstRun = firstRun;
-            for (var i = 1; i <= 5; ++i)
-            {
-                _firstRun = false;
-                try
-                {
-                    if (_listener != null && !_listener.isConfigChange(_config))
-                    {
-                        var local = new Local(_config, _transfer, _rangeSet);
-                        _listener.GetServices()[0] = local;
-#if !_CONSOLE
-                        if (polipoRunner.HasExited())
-                        {
-                            polipoRunner.Stop();
-                            polipoRunner.Start(_config);
-
-                            _listener.GetServices()[3] = new HttpPortForwarder(polipoRunner.RunningPort, _config);
-                        }
-#endif
-                    }
-                    else
-                    {
-                        if (_listener != null)
-                        {
-                            _listener.Stop();
-                            _listener = null;
-                        }
-
-#if !_CONSOLE
-                        polipoRunner.Stop();
-                        polipoRunner.Start(_config);
-#endif
-
-                        var local = new Local(_config, _transfer, _rangeSet);
-                        var services = new List<Listener.Service>();
-                        services.Add(local);
-                        services.Add(_pacServer);
-                        services.Add(new APIServer(this, _config));
-#if !_CONSOLE
-                        services.Add(new HttpPortForwarder(polipoRunner.RunningPort, _config));
-#endif
-                        _listener = new Listener(services);
-                        _listener.Start(_config, 0);
-                    }
-
-                    break;
-                }
-                catch (Exception e)
-                {
-                    // translate Microsoft language into human language
-                    // i.e. An attempt was made to access a socket in a way forbidden by its access permissions => Port already in use
-                    if (e is SocketException)
-                    {
-                        var se = (SocketException) e;
-                        if (se.SocketErrorCode == SocketError.AccessDenied)
-                            e = new Exception(
-                                I18N.GetString("Port already in use") + string.Format(" {0}", _config.localPort), e);
-                    }
-
-                    Logging.LogUsefulException(e);
-                    if (!_firstRun)
-                    {
-                        ReportError(e);
-                        break;
-                    }
-
-                    Thread.Sleep(1000 * i * i);
-                    if (_listener != null)
-                    {
-                        _listener.Stop();
-                        _listener = null;
-                    }
-                }
-            }
-
-            _port_map_listener = new List<Listener>();
-            foreach (var pair in _config.GetPortMapCache())
-                try
-                {
-                    var local = new Local(_config, _transfer, _rangeSet);
-                    var services = new List<Listener.Service>();
-                    services.Add(local);
-                    var listener = new Listener(services);
-                    listener.Start(_config, pair.Key);
-                    _port_map_listener.Add(listener);
-                }
-                catch (Exception e)
-                {
-                    // translate Microsoft language into human language
-                    // i.e. An attempt was made to access a socket in a way forbidden by its access permissions => Port already in use
-                    if (e is SocketException)
-                    {
-                        var se = (SocketException) e;
-                        if (se.SocketErrorCode == SocketError.AccessDenied)
-                            e = new Exception(I18N.GetString("Port already in use") + string.Format(" {0}", pair.Key),
-                                e);
-                    }
-
-                    Logging.LogUsefulException(e);
-                    ReportError(e);
-                }
-
-            ConfigChanged?.Invoke(this, new EventArgs());
-
-            UpdateSystemProxy();
-            Utils.ReleaseMemory();
-        }
-
 
         protected void SaveConfig(Configuration newConfig)
         {
@@ -447,9 +441,7 @@ namespace Shadowsocks.Controller
 
         private void UpdateSystemProxy()
         {
-#if !_CONSOLE
             if (_config.sysProxyMode != (int) ProxyMode.NoModify) SystemProxy.Update(_config, false);
-#endif
         }
 
         private void pacServer_PACFileChanged(object sender, EventArgs e)
